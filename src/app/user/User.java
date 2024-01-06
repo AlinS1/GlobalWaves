@@ -14,6 +14,8 @@ import app.player.PlayerStats;
 import app.searchBar.Filters;
 import app.searchBar.SearchBar;
 import app.utils.Enums;
+import app.wrapped.Wrapped;
+import app.wrapped.WrappedUser;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -72,6 +74,7 @@ public final class User extends UserAbstract {
     public String userType() {
         return "user";
     }
+
 
     /**
      * Search array list.

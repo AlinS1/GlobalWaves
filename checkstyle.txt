@@ -1,0 +1,4 @@
+Starting audit...
+[ERROR] D:\Should_be_on_desktop\Facultate\An2_Sem1\POO\OOP-Part3\.\src\main\Main.java:59:13: 'if' is not followed by whitespace. [WhitespaceAround]
+Audit done.
+Checkstyle ends with 1 errors.

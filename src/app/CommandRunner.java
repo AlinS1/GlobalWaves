@@ -8,6 +8,9 @@ import app.searchBar.Filters;
 import app.user.Artist;
 import app.user.Host;
 import app.user.User;
+import app.user.UserAbstract;
+import app.wrapped.Wrapped;
+import app.wrapped.WrappedUser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import fileio.input.CommandInput;
@@ -264,7 +267,7 @@ public final class CommandRunner {
     public static ObjectNode createPlaylist(final CommandInput commandInput) {
         User user = admin.getUser(commandInput.getUsername());
         String message = user.createPlaylist(commandInput.getPlaylistName(),
-                                             commandInput.getTimestamp());
+                commandInput.getTimestamp());
 
         ObjectNode objectNode = objectMapper.createObjectNode();
         objectNode.put("command", commandInput.getCommand());
@@ -779,6 +782,35 @@ public final class CommandRunner {
         objectNode.put("timestamp", commandInput.getTimestamp());
         objectNode.put("result", objectMapper.valueToTree(playlists));
 
+        return objectNode;
+    }
+
+    public static ObjectNode wrapped(final CommandInput commandInput) {
+        User user = admin.getUser(commandInput.getUsername());
+        Wrapped wrapped = null;
+        if (user == null) {
+            Artist artist = admin.getArtist(commandInput.getUsername());
+            if (artist == null) {
+                Host host = admin.getHost(commandInput.getUsername());
+                wrapped = host.getWrapped();
+            } else {
+                wrapped = artist.getWrapped();
+            }
+        } else {
+            wrapped = user.getWrapped();
+        }
+        
+        ObjectNode objectNode = objectMapper.createObjectNode();
+        objectNode.put("command", commandInput.getCommand());
+        objectNode.put("user", commandInput.getUsername());
+        objectNode.put("timestamp", commandInput.getTimestamp());
+
+        if (!wrapped.verifyWrapped()) {
+            String result = "No data to show for user " + commandInput.getUsername();
+            objectNode.put("result", objectMapper.valueToTree(result));
+        } else {
+            objectNode.put("result", objectMapper.valueToTree(user.getWrapped()));
+        }
         return objectNode;
     }
 }

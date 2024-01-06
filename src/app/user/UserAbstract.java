@@ -1,12 +1,29 @@
 package app.user;
 
+import app.wrapped.Wrapped;
+import app.wrapped.WrappedArtist;
+import app.wrapped.WrappedHost;
+import app.wrapped.WrappedUser;
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * The type User abstract.
  */
 public abstract class UserAbstract {
+
+    @Setter
+    @Getter
     private String username;
+
+    @Setter
+    @Getter
     private int age;
+
+    @Setter
+    @Getter
     private String city;
+    private Wrapped wrapped;
 
     /**
      * Instantiates a new User abstract.
@@ -19,60 +36,7 @@ public abstract class UserAbstract {
         this.username = username;
         this.age = age;
         this.city = city;
-    }
-
-    /**
-     * Gets username.
-     *
-     * @return the username
-     */
-    public String getUsername() {
-        return username;
-    }
-
-    /**
-     * Sets username.
-     *
-     * @param username the username
-     */
-    public void setUsername(final String username) {
-        this.username = username;
-    }
-
-    /**
-     * Gets age.
-     *
-     * @return the age
-     */
-    public int getAge() {
-        return age;
-    }
-
-    /**
-     * Sets age.
-     *
-     * @param age the age
-     */
-    public void setAge(final int age) {
-        this.age = age;
-    }
-
-    /**
-     * Gets city.
-     *
-     * @return the city
-     */
-    public String getCity() {
-        return city;
-    }
-
-    /**
-     * Sets city.
-     *
-     * @param city the city
-     */
-    public void setCity(final String city) {
-        this.city = city;
+        this.wrapped = setWrapped(userType());
     }
 
     /**
@@ -81,4 +45,25 @@ public abstract class UserAbstract {
      * @return the string
      */
     public abstract String userType();
+
+
+
+    // ====================== ETAPA 3 ====================== //
+    public Wrapped getWrapped(){
+        return wrapped;
+    }
+
+    public Wrapped setWrapped(String userType) {
+        switch (userType) {
+            case "USER":
+                return new WrappedUser("USER");
+            case "ARTIST":
+                return new WrappedArtist("ARTIST");
+            case "HOST":
+                return new WrappedHost("HOST");
+        }
+        return null;
+    }
+
+
 }
