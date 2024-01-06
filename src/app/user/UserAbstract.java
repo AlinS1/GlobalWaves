@@ -55,12 +55,12 @@ public abstract class UserAbstract {
 
     public Wrapped setWrapped(String userType) {
         switch (userType) {
-            case "USER":
-                return new WrappedUser("USER");
-            case "ARTIST":
-                return new WrappedArtist("ARTIST");
-            case "HOST":
-                return new WrappedHost("HOST");
+            case "user":
+                return new WrappedUser("user");
+            case "artist":
+                return new WrappedArtist("artist");
+            case "host":
+                return new WrappedHost("host");
         }
         return null;
     }

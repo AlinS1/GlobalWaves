@@ -1,8 +1,10 @@
 package app.user;
 
+import app.Admin;
 import app.audio.Collections.AudioCollection;
 import app.audio.Collections.Playlist;
 import app.audio.Collections.PlaylistOutput;
+import app.audio.Collections.Podcast;
 import app.audio.Files.AudioFile;
 import app.audio.Files.Song;
 import app.audio.LibraryEntry;
@@ -10,6 +12,7 @@ import app.pages.HomePage;
 import app.pages.LikedContentPage;
 import app.pages.Page;
 import app.player.Player;
+import app.player.PlayerSource;
 import app.player.PlayerStats;
 import app.searchBar.Filters;
 import app.searchBar.SearchBar;
@@ -590,6 +593,23 @@ public final class User extends UserAbstract {
             return;
         }
 
-        player.simulatePlayer(time);
+        player.simulatePlayer(time, this);
+    }
+
+    // ===================== ETAPA 3 =====================
+    public void updateWrapped(PlayerSource source) {
+        Wrapped wrapped = getWrapped();
+        wrapped.updateWrapped(source, this);
+
+        if(source.getType() == Enums.PlayerSourceType.LIBRARY || source.getType() == Enums.PlayerSourceType.ALBUM || source.getType() == Enums.PlayerSourceType.PLAYLIST){
+            AudioFile audioFile = (AudioFile) source.getAudioFile();
+            Artist artist = Admin.getInstance().getArtist(((Song) audioFile).getArtist());
+            artist.getWrapped().updateWrapped(source, this);
+        }
+        if(source.getType() == Enums.PlayerSourceType.PODCAST){
+            Podcast podcast = (Podcast) source.getAudioCollection();
+            Host host = Admin.getInstance().getHost(podcast.getOwner());
+            host.getWrapped().updateWrapped(source, this);
+        }
     }
 }

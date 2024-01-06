@@ -1,13 +1,29 @@
 package app.wrapped;
 
+import app.audio.Files.AudioFile;
+import app.audio.Files.Song;
+import app.player.PlayerSource;
+import app.user.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.ArrayList;
 import java.util.TreeMap;
 
 public class WrappedArtist implements Wrapped {
+
+    @JsonIgnore
     private String userType = "ARTIST";
-    private TreeMap<String, Integer> topAlbums = new TreeMap<>();
-    private TreeMap<String, Integer> topSongs = new TreeMap<>();
-    private TreeMap<String, Integer> topFans = new TreeMap<>();
+    @JsonIgnore
+    private TreeMap<String, Integer> allAlbums = new TreeMap<>();
+    @JsonIgnore
+    private TreeMap<String, Integer> allSongs = new TreeMap<>();
+    @JsonIgnore
+    private TreeMap<String, Integer> allFans = new TreeMap<>();
+    private TreeMap<String, Integer> topAlbums;
+    private TreeMap<String, Integer> topSongs;
+    private ArrayList<String> topFans;
+    private int listeners;
+
 
     public WrappedArtist(String userType) {
         this.userType = userType;
@@ -19,41 +35,41 @@ public class WrappedArtist implements Wrapped {
     }
 
     public void addListenAlbum(String album) {
-        if (topAlbums.containsKey(album)) {
-            topAlbums.put(album, topAlbums.get(album) + 1);
+        if (allAlbums.containsKey(album)) {
+            allAlbums.put(album, allAlbums.get(album) + 1);
         } else {
-            topAlbums.put(album, 1);
+            allAlbums.put(album, 1);
         }
     }
 
     public void addListenSong(String song) {
-        if (topSongs.containsKey(song)) {
-            topSongs.put(song, topSongs.get(song) + 1);
+        if (allSongs.containsKey(song)) {
+            allSongs.put(song, allSongs.get(song) + 1);
         } else {
-            topSongs.put(song, 1);
+            allSongs.put(song, 1);
         }
     }
 
     public void addListenFan(String fan) {
-        if (topFans.containsKey(fan)) {
-            topFans.put(fan, topFans.get(fan) + 1);
+        if (allFans.containsKey(fan)) {
+            allFans.put(fan, allFans.get(fan) + 1);
         } else {
-            topFans.put(fan, 1);
+            allFans.put(fan, 1);
         }
     }
 
     public TreeMap<String, Integer> getMax5TopAlbums() {
-        return topAlbums.entrySet().stream().limit(5).collect(TreeMap::new, (m, e) -> m.put(e.getKey(), e.getValue()), TreeMap::putAll);
+        return allAlbums.entrySet().stream().limit(5).collect(TreeMap::new, (m, e) -> m.put(e.getKey(), e.getValue()), TreeMap::putAll);
     }
 
     public TreeMap<String, Integer> getMax5TopSongs() {
-        return topSongs.entrySet().stream().limit(5).collect(TreeMap::new, (m, e) -> m.put(e.getKey(), e.getValue()), TreeMap::putAll);
+        return allSongs.entrySet().stream().limit(5).collect(TreeMap::new, (m, e) -> m.put(e.getKey(), e.getValue()), TreeMap::putAll);
     }
 
     public ArrayList<String> getMax5TopFans() {
         ArrayList<String> topFansList = new ArrayList<>();
         int kon = 0;
-        for (String fan : topFans.keySet()) {
+        for (String fan : allFans.keySet()) {
             topFansList.add(fan);
             kon++;
             if (kon == 5) {
@@ -64,13 +80,28 @@ public class WrappedArtist implements Wrapped {
     }
 
     public int getNoOfListens() {
-        return topFans.entrySet().size();
+        return allFans.entrySet().size();
     }
 
     public boolean verifyWrapped(){
-        if(topAlbums.entrySet().size() == 0 && topSongs.entrySet().size() == 0 && topFans.entrySet().size() == 0){
+        if(allAlbums.entrySet().size() == 0 && allSongs.entrySet().size() == 0 && allFans.entrySet().size() == 0){
             return false;
         }
         return true;
+    }
+
+    @Override
+    public void updateWrapped(PlayerSource source, User user) {
+        AudioFile audioFile = (AudioFile) source.getAudioFile();
+        addListenSong(audioFile.getName());
+        addListenAlbum(((Song)audioFile).getAlbum());
+        addListenFan(user.getUsername());
+    }
+
+    public void makeFinalWrapped(){
+        topAlbums = getMax5TopAlbums();
+        topSongs = getMax5TopSongs();
+        topFans = getMax5TopFans();
+        listeners = getNoOfListens();
     }
 }

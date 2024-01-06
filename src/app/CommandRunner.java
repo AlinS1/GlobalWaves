@@ -799,7 +799,10 @@ public final class CommandRunner {
         } else {
             wrapped = user.getWrapped();
         }
-        
+
+
+        wrapped.makeFinalWrapped();
+
         ObjectNode objectNode = objectMapper.createObjectNode();
         objectNode.put("command", commandInput.getCommand());
         objectNode.put("user", commandInput.getUsername());
@@ -809,7 +812,7 @@ public final class CommandRunner {
             String result = "No data to show for user " + commandInput.getUsername();
             objectNode.put("result", objectMapper.valueToTree(result));
         } else {
-            objectNode.put("result", objectMapper.valueToTree(user.getWrapped()));
+            objectNode.put("result", objectMapper.valueToTree(wrapped));
         }
         return objectNode;
     }

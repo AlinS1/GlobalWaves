@@ -3,6 +3,7 @@ package app.player;
 import app.audio.Collections.AudioCollection;
 import app.audio.Files.AudioFile;
 import app.audio.LibraryEntry;
+import app.user.User;
 import app.utils.Enums;
 import lombok.Getter;
 
@@ -168,10 +169,15 @@ public final class Player {
      *
      * @param time the time
      */
-    public void simulatePlayer(final int time) {
+    public void simulatePlayer(final int time, User user) {
         int elapsedTime = time;
         if (!paused) {
             while (elapsedTime >= source.getDuration()) {
+                // update wrapped
+                user.updateWrapped(source);
+
+                //
+
                 elapsedTime -= source.getDuration();
                 next();
                 if (paused) {
