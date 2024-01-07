@@ -598,7 +598,6 @@ public final class User extends UserAbstract {
 
     // ===================== ETAPA 3 =====================
     public void updateWrapped(PlayerSource source) {
-        Wrapped wrapped = getWrapped();
         wrapped.updateWrapped(source, this);
 
         if(source.getType() == Enums.PlayerSourceType.LIBRARY || source.getType() == Enums.PlayerSourceType.ALBUM || source.getType() == Enums.PlayerSourceType.PLAYLIST){

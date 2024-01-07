@@ -5,10 +5,14 @@ import app.audio.Files.Song;
 import app.player.PlayerSource;
 import app.user.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.util.ArrayList;
 import java.util.TreeMap;
 
+@ToString
 public class WrappedArtist implements Wrapped {
 
     @JsonIgnore
@@ -19,9 +23,14 @@ public class WrappedArtist implements Wrapped {
     private TreeMap<String, Integer> allSongs = new TreeMap<>();
     @JsonIgnore
     private TreeMap<String, Integer> allFans = new TreeMap<>();
+
+    @Getter @Setter
     private TreeMap<String, Integer> topAlbums;
+    @Getter @Setter
     private TreeMap<String, Integer> topSongs;
+    @Getter @Setter
     private ArrayList<String> topFans;
+    @Getter @Setter
     private int listeners;
 
 
@@ -58,15 +67,15 @@ public class WrappedArtist implements Wrapped {
         }
     }
 
-    public TreeMap<String, Integer> getMax5TopAlbums() {
-        return allAlbums.entrySet().stream().limit(5).collect(TreeMap::new, (m, e) -> m.put(e.getKey(), e.getValue()), TreeMap::putAll);
+    public void getMax5TopAlbums() {
+        topAlbums = allAlbums.entrySet().stream().limit(5).collect(TreeMap::new, (m, e) -> m.put(e.getKey(), e.getValue()), TreeMap::putAll);
     }
 
-    public TreeMap<String, Integer> getMax5TopSongs() {
-        return allSongs.entrySet().stream().limit(5).collect(TreeMap::new, (m, e) -> m.put(e.getKey(), e.getValue()), TreeMap::putAll);
+    public void getMax5TopSongs() {
+        topSongs = allSongs.entrySet().stream().limit(5).collect(TreeMap::new, (m, e) -> m.put(e.getKey(), e.getValue()), TreeMap::putAll);
     }
 
-    public ArrayList<String> getMax5TopFans() {
+    public void getMax5TopFans() {
         ArrayList<String> topFansList = new ArrayList<>();
         int kon = 0;
         for (String fan : allFans.keySet()) {
@@ -76,15 +85,15 @@ public class WrappedArtist implements Wrapped {
                 break;
             }
         }
-        return topFansList;
+        topFans = topFansList;
     }
 
-    public int getNoOfListens() {
-        return allFans.entrySet().size();
+    public void getNoOfListens() {
+        listeners = allFans.entrySet().size();
     }
 
-    public boolean verifyWrapped(){
-        if(allAlbums.entrySet().size() == 0 && allSongs.entrySet().size() == 0 && allFans.entrySet().size() == 0){
+    public boolean verifyWrapped() {
+        if (allAlbums.entrySet().size() == 0 && allSongs.entrySet().size() == 0 && allFans.entrySet().size() == 0) {
             return false;
         }
         return true;
@@ -94,14 +103,15 @@ public class WrappedArtist implements Wrapped {
     public void updateWrapped(PlayerSource source, User user) {
         AudioFile audioFile = (AudioFile) source.getAudioFile();
         addListenSong(audioFile.getName());
-        addListenAlbum(((Song)audioFile).getAlbum());
+        addListenAlbum(((Song) audioFile).getAlbum());
         addListenFan(user.getUsername());
     }
 
-    public void makeFinalWrapped(){
-        topAlbums = getMax5TopAlbums();
-        topSongs = getMax5TopSongs();
-        topFans = getMax5TopFans();
-        listeners = getNoOfListens();
+    public void makeFinalWrapped() {
+        getMax5TopAlbums();
+        getMax5TopSongs();
+        getMax5TopFans();
+        getNoOfListens();
     }
+
 }

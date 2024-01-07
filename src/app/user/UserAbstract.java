@@ -23,7 +23,7 @@ public abstract class UserAbstract {
     @Setter
     @Getter
     private String city;
-    private Wrapped wrapped;
+    protected Wrapped wrapped;
 
     /**
      * Instantiates a new User abstract.

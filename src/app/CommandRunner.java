@@ -10,6 +10,8 @@ import app.user.Host;
 import app.user.User;
 import app.user.UserAbstract;
 import app.wrapped.Wrapped;
+import app.wrapped.WrappedArtist;
+import app.wrapped.WrappedHost;
 import app.wrapped.WrappedUser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -786,34 +788,38 @@ public final class CommandRunner {
     }
 
     public static ObjectNode wrapped(final CommandInput commandInput) {
-        User user = admin.getUser(commandInput.getUsername());
-        Wrapped wrapped = null;
-        if (user == null) {
-            Artist artist = admin.getArtist(commandInput.getUsername());
-            if (artist == null) {
-                Host host = admin.getHost(commandInput.getUsername());
-                wrapped = host.getWrapped();
-            } else {
-                wrapped = artist.getWrapped();
-            }
-        } else {
-            wrapped = user.getWrapped();
-        }
-
-
-        wrapped.makeFinalWrapped();
-
         ObjectNode objectNode = objectMapper.createObjectNode();
         objectNode.put("command", commandInput.getCommand());
         objectNode.put("user", commandInput.getUsername());
         objectNode.put("timestamp", commandInput.getTimestamp());
 
+        User user = admin.getUser(commandInput.getUsername());
+        Wrapped wrapped = null;
+        String userType = null;
+        if (user == null) {
+            Artist artist = admin.getArtist(commandInput.getUsername());
+            if (artist == null) {
+                Host host = admin.getHost(commandInput.getUsername());
+                wrapped = host.getWrapped();
+                userType = "host";
+            } else {
+                wrapped = artist.getWrapped();
+                userType = "artist";
+            }
+        } else {
+            wrapped = user.getWrapped();
+            userType = "user";
+        }
+
+
         if (!wrapped.verifyWrapped()) {
             String result = "No data to show for user " + commandInput.getUsername();
             objectNode.put("result", objectMapper.valueToTree(result));
         } else {
+            wrapped.makeFinalWrapped();
             objectNode.put("result", objectMapper.valueToTree(wrapped));
         }
+
         return objectNode;
     }
 }

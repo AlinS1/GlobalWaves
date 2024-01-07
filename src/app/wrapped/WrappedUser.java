@@ -1,23 +1,19 @@
 package app.wrapped;
 
-import app.Admin;
-import app.audio.Collections.Album;
-import app.audio.Collections.AudioCollection;
 import app.audio.Files.AudioFile;
 import app.audio.Files.Episode;
 import app.audio.Files.Song;
 import app.player.PlayerSource;
-import app.user.Artist;
 import app.user.User;
 import app.utils.Enums;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import net.sf.saxon.trans.packages.PackageLibrary;
-import org.antlr.v4.runtime.tree.Tree;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import lombok.Getter;
+import lombok.ToString;
 
-import java.util.ArrayList;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
+@ToString @JsonSerialize
 public class WrappedUser implements Wrapped {
     @JsonIgnore
     private String userType = "USER";
@@ -31,11 +27,18 @@ public class WrappedUser implements Wrapped {
     private TreeMap<String, Integer> listenedAlbumsCount = new TreeMap<>();
     @JsonIgnore
     private TreeMap<String, Integer> watchedEpisodesCount = new TreeMap<>();
+
+    @Getter
     private TreeMap<String, Integer> topArtists;
+    @Getter
     private TreeMap<String, Integer> topGenres;
+    @Getter
     private TreeMap<String, Integer> topSongs;
+    @Getter
     private TreeMap<String, Integer> topAlbums;
+    @Getter
     private TreeMap<String, Integer> topEpisodes;
+
 
     public WrappedUser(String userType) {
         this.userType = userType;
@@ -86,24 +89,24 @@ public class WrappedUser implements Wrapped {
         }
     }
 
-    public TreeMap<String, Integer> getMax5ListenedArtistsCount() {
-        return listenedArtistsCount.entrySet().stream().limit(5).collect(TreeMap::new, (m, e) -> m.put(e.getKey(), e.getValue()), TreeMap::putAll);
+    public void setTop5ListenedArtists() {
+        topArtists = listenedArtistsCount.entrySet().stream().limit(5).collect(TreeMap::new, (m, e) -> m.put(e.getKey(), e.getValue()), TreeMap::putAll);
     }
 
-    public TreeMap<String, Integer> getMax5ListenedGenresCount() {
-        return listenedGenresCount.entrySet().stream().limit(5).collect(TreeMap::new, (m, e) -> m.put(e.getKey(), e.getValue()), TreeMap::putAll);
+    public void setTop5ListenedGenres() {
+        topGenres = listenedGenresCount.entrySet().stream().limit(5).collect(TreeMap::new, (m, e) -> m.put(e.getKey(), e.getValue()), TreeMap::putAll);
     }
 
-    public TreeMap<String, Integer> getMax5ListenedSongsCount() {
-        return listenedSongsCount.entrySet().stream().limit(5).collect(TreeMap::new, (m, e) -> m.put(e.getKey(), e.getValue()), TreeMap::putAll);
+    public void setTop5ListenedSongs() {
+        topSongs = listenedSongsCount.entrySet().stream().limit(5).collect(TreeMap::new, (m, e) -> m.put(e.getKey(), e.getValue()), TreeMap::putAll);
     }
 
-    public TreeMap<String, Integer> getMax5ListenedAlbumsCount() {
-        return listenedAlbumsCount.entrySet().stream().limit(5).collect(TreeMap::new, (m, e) -> m.put(e.getKey(), e.getValue()), TreeMap::putAll);
+    public void setTop5ListenedAlbums() {
+        topAlbums = listenedAlbumsCount.entrySet().stream().limit(5).collect(TreeMap::new, (m, e) -> m.put(e.getKey(), e.getValue()), TreeMap::putAll);
     }
 
-    public TreeMap<String, Integer> getMax5WatchedEpisodesCount() {
-        return watchedEpisodesCount.entrySet().stream().limit(5).collect(TreeMap::new, (m, e) -> m.put(e.getKey(), e.getValue()), TreeMap::putAll);
+    public void setTop5WatchedEpisodes() {
+        topEpisodes = watchedEpisodesCount.entrySet().stream().limit(5).collect(TreeMap::new, (m, e) -> m.put(e.getKey(), e.getValue()), TreeMap::putAll);
     }
 
 
@@ -137,10 +140,10 @@ public class WrappedUser implements Wrapped {
     }
 
     public void makeFinalWrapped(){
-        topArtists = getMax5ListenedArtistsCount();
-        topGenres = getMax5ListenedGenresCount();
-        topSongs = getMax5ListenedSongsCount();
-        topAlbums = getMax5ListenedAlbumsCount();
-        topEpisodes = getMax5WatchedEpisodesCount();
+        setTop5ListenedArtists();
+        setTop5ListenedGenres();
+        setTop5ListenedSongs();
+        setTop5ListenedAlbums();
+        setTop5WatchedEpisodes();
     }
 }
