@@ -4,9 +4,11 @@ import app.player.PlayerSource;
 import app.user.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.ToString;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Map;
 import java.util.TreeMap;
 
 @ToString
@@ -18,9 +20,9 @@ public class WrappedHost implements Wrapped {
     @JsonIgnore
     private TreeMap<String, Integer> allFans = new TreeMap<>();
 
-    @Getter @Setter
+    @Getter
     private TreeMap<String, Integer> topEpisodes;
-    @Getter @Setter
+    @Getter
     private int listeners;
 
     public WrappedHost(String userType) {
@@ -48,12 +50,22 @@ public class WrappedHost implements Wrapped {
         }
     }
 
-    public TreeMap<String, Integer> getMax5TopEpisodes() {
-        return allEpisodes.entrySet().stream().limit(5).collect(TreeMap::new, (m, e) -> m.put(e.getKey(), e.getValue()), TreeMap::putAll);
-    }
+    public void setTop5Episodes() {
+        ArrayList<Map.Entry<String, Integer>> entryList = new ArrayList<>(allEpisodes.entrySet());
 
-    public int getNrListens() {
-        return allFans.entrySet().size();
+        Collections.sort(entryList, (entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue()));
+
+        int kon = 0;
+        for (Map.Entry<String, Integer> entry : entryList) {
+            topEpisodes.put(entry.getKey(), entry.getValue());
+            kon++;
+            if (kon == 5) {
+                break;
+            }
+        }    }
+
+    public void setNrListens() {
+        listeners = allFans.entrySet().size();
     }
 
     public boolean verifyWrapped() {
@@ -71,7 +83,7 @@ public class WrappedHost implements Wrapped {
 
     @Override
     public void makeFinalWrapped() {
-        topEpisodes = getMax5TopEpisodes();
-        listeners = getNrListens();
+        setTop5Episodes();
+        setNrListens();
     }
 }

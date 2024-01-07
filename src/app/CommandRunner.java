@@ -9,15 +9,13 @@ import app.user.Artist;
 import app.user.Host;
 import app.user.User;
 import app.user.UserAbstract;
-import app.wrapped.Wrapped;
-import app.wrapped.WrappedArtist;
-import app.wrapped.WrappedHost;
-import app.wrapped.WrappedUser;
+import app.wrapped.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import fileio.input.CommandInput;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
@@ -819,6 +817,23 @@ public final class CommandRunner {
             wrapped.makeFinalWrapped();
             objectNode.put("result", objectMapper.valueToTree(wrapped));
         }
+
+        return objectNode;
+    }
+
+    public static ObjectNode endProgram() {
+        ArrayList<Artist> artistsRanked = Admin.getInstance().rankArtistsByMonetization();
+
+        LinkedHashMap<String, Monetization> monetizationTable = new LinkedHashMap<>();
+
+        for(Artist artist : artistsRanked){
+            artist.getMonetization().setRanking(artistsRanked.indexOf(artist) + 1);
+            monetizationTable.put(artist.getUsername(), artist.getMonetization());
+        }
+
+        ObjectNode objectNode = objectMapper.createObjectNode();
+        objectNode.put("command", "endProgram");
+        objectNode.put("result", objectMapper.valueToTree(monetizationTable));
 
         return objectNode;
     }

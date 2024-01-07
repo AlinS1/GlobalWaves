@@ -1,13 +1,14 @@
 package app.audio;
 
 import lombok.Getter;
+import lombok.ToString;
 
 import java.util.ArrayList;
 
 /**
  * The type Library entry.
  */
-@Getter
+@Getter @ToString
 public abstract class LibraryEntry {
     private final String name;
 

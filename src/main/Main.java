@@ -57,7 +57,7 @@ public final class Main {
             }
             kon++;
 
-            if (kon > 1) {
+            if (kon > 3) {
                 break;
             }
 
@@ -149,6 +149,8 @@ public final class Main {
                 default -> System.out.println("Invalid command " + commandName);
             }
         }
+
+        outputs.add(CommandRunner.endProgram());
 
         ObjectWriter objectWriter = objectMapper.writerWithDefaultPrettyPrinter();
         objectWriter.writeValue(new File(filePath2), outputs);

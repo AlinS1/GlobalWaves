@@ -1,6 +1,7 @@
 package app.audio.Files;
 
 import lombok.Getter;
+import lombok.ToString;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,7 +9,7 @@ import java.util.List;
 /**
  * The type Song.
  */
-@Getter
+@Getter @ToString
 public final class Song extends AudioFile {
     private final String album;
     private final ArrayList<String> tags;

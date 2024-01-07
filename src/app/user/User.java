@@ -95,7 +95,7 @@ public final class User extends UserAbstract {
 
         if (type.equals("artist") || type.equals("host")) {
             List<ContentCreator> contentCreatorsEntries =
-            searchBar.searchContentCreator(filters, type);
+                    searchBar.searchContentCreator(filters, type);
 
             for (ContentCreator contentCreator : contentCreatorsEntries) {
                 results.add(contentCreator.getUsername());
@@ -128,7 +128,7 @@ public final class User extends UserAbstract {
         lastSearched = false;
 
         if (searchBar.getLastSearchType().equals("artist")
-            || searchBar.getLastSearchType().equals("host")) {
+                || searchBar.getLastSearchType().equals("host")) {
             ContentCreator selected = searchBar.selectContentCreator(itemNumber);
 
             if (selected == null) {
@@ -163,12 +163,15 @@ public final class User extends UserAbstract {
         }
 
         if (!searchBar.getLastSearchType().equals("song")
-            && ((AudioCollection) searchBar.getLastSelected()).getNumberOfTracks() == 0) {
+                && ((AudioCollection) searchBar.getLastSelected()).getNumberOfTracks() == 0) {
             return "You can't load an empty audio collection!";
         }
 
         player.setSource(searchBar.getLastSelected(), searchBar.getLastSearchType());
         searchBar.clearSelection();
+
+        // ETAPA 3
+        this.updateWrapped(player.getSource());
 
         player.pause();
 
@@ -255,7 +258,7 @@ public final class User extends UserAbstract {
         }
 
         if (!player.getType().equals("playlist")
-            && !player.getType().equals("album")) {
+                && !player.getType().equals("album")) {
             return "The loaded source is not a playlist or an album.";
         }
 
@@ -328,7 +331,7 @@ public final class User extends UserAbstract {
         }
 
         if (!player.getType().equals("song") && !player.getType().equals("playlist")
-            && !player.getType().equals("album")) {
+                && !player.getType().equals("album")) {
             return "Loaded source is not a song.";
         }
 
@@ -598,14 +601,16 @@ public final class User extends UserAbstract {
 
     // ===================== ETAPA 3 =====================
     public void updateWrapped(PlayerSource source) {
-        wrapped.updateWrapped(source, this);
+        if (source == null || source.getAudioFile() == null)
+            return;
+        this.wrapped.updateWrapped(source, this);
 
-        if(source.getType() == Enums.PlayerSourceType.LIBRARY || source.getType() == Enums.PlayerSourceType.ALBUM || source.getType() == Enums.PlayerSourceType.PLAYLIST){
+        if (source.getType() == Enums.PlayerSourceType.LIBRARY || source.getType() == Enums.PlayerSourceType.ALBUM || source.getType() == Enums.PlayerSourceType.PLAYLIST) {
             AudioFile audioFile = (AudioFile) source.getAudioFile();
             Artist artist = Admin.getInstance().getArtist(((Song) audioFile).getArtist());
             artist.getWrapped().updateWrapped(source, this);
         }
-        if(source.getType() == Enums.PlayerSourceType.PODCAST){
+        if (source.getType() == Enums.PlayerSourceType.PODCAST) {
             Podcast podcast = (Podcast) source.getAudioCollection();
             Host host = Admin.getInstance().getHost(podcast.getOwner());
             host.getWrapped().updateWrapped(source, this);

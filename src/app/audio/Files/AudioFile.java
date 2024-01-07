@@ -2,8 +2,9 @@ package app.audio.Files;
 
 import app.audio.LibraryEntry;
 import lombok.Getter;
+import lombok.ToString;
 
-@Getter
+@Getter @ToString
 public abstract class AudioFile extends LibraryEntry {
     private final Integer duration;
 

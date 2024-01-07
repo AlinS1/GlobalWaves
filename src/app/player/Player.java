@@ -173,16 +173,12 @@ public final class Player {
         int elapsedTime = time;
         if (!paused) {
             while (elapsedTime >= source.getDuration()) {
-                // update wrapped
-                user.updateWrapped(source);
-
-                //
-
                 elapsedTime -= source.getDuration();
                 next();
                 if (paused) {
                     break;
                 }
+                user.updateWrapped(source);
             }
             if (!paused) {
                 source.skip(-elapsedTime);

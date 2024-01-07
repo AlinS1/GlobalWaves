@@ -6,11 +6,9 @@ import app.player.PlayerSource;
 import app.user.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.ToString;
 
-import java.util.ArrayList;
-import java.util.TreeMap;
+import java.util.*;
 
 @ToString
 public class WrappedArtist implements Wrapped {
@@ -21,16 +19,16 @@ public class WrappedArtist implements Wrapped {
     private TreeMap<String, Integer> allAlbums = new TreeMap<>();
     @JsonIgnore
     private TreeMap<String, Integer> allSongs = new TreeMap<>();
-    @JsonIgnore
+    @JsonIgnore @Getter
     private TreeMap<String, Integer> allFans = new TreeMap<>();
 
-    @Getter @Setter
-    private TreeMap<String, Integer> topAlbums;
-    @Getter @Setter
-    private TreeMap<String, Integer> topSongs;
-    @Getter @Setter
+    @Getter
+    private LinkedHashMap<String, Integer> topAlbums;
+    @Getter
+    private LinkedHashMap<String, Integer> topSongs;
+    @Getter
     private ArrayList<String> topFans;
-    @Getter @Setter
+    @Getter
     private int listeners;
 
 
@@ -67,33 +65,62 @@ public class WrappedArtist implements Wrapped {
         }
     }
 
-    public void getMax5TopAlbums() {
-        topAlbums = allAlbums.entrySet().stream().limit(5).collect(TreeMap::new, (m, e) -> m.put(e.getKey(), e.getValue()), TreeMap::putAll);
-    }
+    public void setTop5Albums() {
+        topAlbums = new LinkedHashMap<>();
 
-    public void getMax5TopSongs() {
-        topSongs = allSongs.entrySet().stream().limit(5).collect(TreeMap::new, (m, e) -> m.put(e.getKey(), e.getValue()), TreeMap::putAll);
-    }
+        ArrayList<Map.Entry<String, Integer>> entryList = new ArrayList<>(allAlbums.entrySet());
 
-    public void getMax5TopFans() {
-        ArrayList<String> topFansList = new ArrayList<>();
+        Collections.sort(entryList, (entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue()));
+
         int kon = 0;
-        for (String fan : allFans.keySet()) {
-            topFansList.add(fan);
+        for (Map.Entry<String, Integer> entry : entryList) {
+            topAlbums.put(entry.getKey(), entry.getValue());
             kon++;
             if (kon == 5) {
                 break;
             }
         }
-        topFans = topFansList;
     }
 
-    public void getNoOfListens() {
+    public void setTop5Songs() {
+        topSongs = new LinkedHashMap<>();
+
+        ArrayList<Map.Entry<String, Integer>> entryList = new ArrayList<>(allSongs.entrySet());
+
+        Collections.sort(entryList, (entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue()));
+
+        int kon = 0;
+        for (Map.Entry<String, Integer> entry : entryList) {
+            topSongs.put(entry.getKey(), entry.getValue());
+            kon++;
+            if (kon == 5) {
+                break;
+            }
+        }    }
+
+    public void setTop5Fans() {
+        topFans = new ArrayList<>();
+
+        ArrayList<Map.Entry<String, Integer>> entryList = new ArrayList<>(allFans.entrySet());
+
+        Collections.sort(entryList, (entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue()));
+
+        int kon = 0;
+        for (Map.Entry<String, Integer> entry : entryList) {
+            topFans.add(entry.getKey());
+            kon++;
+            if (kon == 5) {
+                break;
+            }
+        }
+    }
+
+    public void setNrOfListens() {
         listeners = allFans.entrySet().size();
     }
 
     public boolean verifyWrapped() {
-        if (allAlbums.entrySet().size() == 0 && allSongs.entrySet().size() == 0 && allFans.entrySet().size() == 0) {
+        if (allAlbums.entrySet().isEmpty() && allSongs.entrySet().isEmpty() && allFans.entrySet().isEmpty()) {
             return false;
         }
         return true;
@@ -108,10 +135,10 @@ public class WrappedArtist implements Wrapped {
     }
 
     public void makeFinalWrapped() {
-        getMax5TopAlbums();
-        getMax5TopSongs();
-        getMax5TopFans();
-        getNoOfListens();
+        setTop5Albums();
+        setTop5Songs();
+        setTop5Fans();
+        setNrOfListens();
     }
 
 }

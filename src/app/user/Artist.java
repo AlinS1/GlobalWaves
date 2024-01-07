@@ -7,6 +7,8 @@ import app.audio.Collections.Album;
 import app.audio.Collections.AlbumOutput;
 import app.audio.Files.Song;
 import app.pages.ArtistPage;
+import app.wrapped.Monetization;
+import lombok.Getter;
 
 /**
  * The type Artist.
@@ -15,6 +17,8 @@ public final class Artist extends ContentCreator {
     private ArrayList<Album> albums;
     private ArrayList<Merchandise> merch;
     private ArrayList<Event> events;
+    @Getter
+    private Monetization monetization = new Monetization();
 
     /**
      * Instantiates a new Artist.
@@ -124,5 +128,11 @@ public final class Artist extends ContentCreator {
      */
     public String userType() {
         return "artist";
+    }
+
+    // ====================== ETAPA 3 ====================== //
+
+    public double getTotalRevenueOfArtist(){
+        return monetization.getSongRevenue() + monetization.getMerchRevenue();
     }
 }

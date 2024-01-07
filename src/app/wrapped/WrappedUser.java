@@ -3,6 +3,7 @@ package app.wrapped;
 import app.audio.Files.AudioFile;
 import app.audio.Files.Episode;
 import app.audio.Files.Song;
+import app.audio.LibraryEntry;
 import app.player.PlayerSource;
 import app.user.User;
 import app.utils.Enums;
@@ -11,9 +12,10 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Getter;
 import lombok.ToString;
 
-import java.util.TreeMap;
+import java.util.*;
 
-@ToString @JsonSerialize
+@ToString
+@JsonSerialize
 public class WrappedUser implements Wrapped {
     @JsonIgnore
     private String userType = "USER";
@@ -29,15 +31,15 @@ public class WrappedUser implements Wrapped {
     private TreeMap<String, Integer> watchedEpisodesCount = new TreeMap<>();
 
     @Getter
-    private TreeMap<String, Integer> topArtists;
+    private LinkedHashMap<String, Integer> topArtists;
     @Getter
-    private TreeMap<String, Integer> topGenres;
+    private LinkedHashMap<String, Integer> topGenres;
     @Getter
-    private TreeMap<String, Integer> topSongs;
+    private LinkedHashMap<String, Integer> topSongs;
     @Getter
-    private TreeMap<String, Integer> topAlbums;
+    private LinkedHashMap<String, Integer> topAlbums;
     @Getter
-    private TreeMap<String, Integer> topEpisodes;
+    private LinkedHashMap<String, Integer> topEpisodes;
 
 
     public WrappedUser(String userType) {
@@ -90,23 +92,88 @@ public class WrappedUser implements Wrapped {
     }
 
     public void setTop5ListenedArtists() {
-        topArtists = listenedArtistsCount.entrySet().stream().limit(5).collect(TreeMap::new, (m, e) -> m.put(e.getKey(), e.getValue()), TreeMap::putAll);
+        topArtists = new LinkedHashMap<>();
+
+        ArrayList<Map.Entry<String, Integer>> entryList = new ArrayList<>(listenedArtistsCount.entrySet());
+
+        Collections.sort(entryList, (entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue()));
+
+        int kon = 0;
+        for (Map.Entry<String, Integer> entry : entryList) {
+            topArtists.put(entry.getKey(), entry.getValue());
+            kon++;
+            if (kon == 5) {
+                break;
+            }
+        }
     }
 
     public void setTop5ListenedGenres() {
-        topGenres = listenedGenresCount.entrySet().stream().limit(5).collect(TreeMap::new, (m, e) -> m.put(e.getKey(), e.getValue()), TreeMap::putAll);
+        topGenres = new LinkedHashMap<>();
+
+        ArrayList<Map.Entry<String, Integer>> entryList = new ArrayList<>(listenedGenresCount.entrySet());
+
+        Collections.sort(entryList, (entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue()));
+
+        int kon = 0;
+        for (Map.Entry<String, Integer> entry : entryList) {
+            topGenres.put(entry.getKey(), entry.getValue());
+            kon++;
+            if (kon == 5) {
+                break;
+            }
+        }
     }
 
     public void setTop5ListenedSongs() {
-        topSongs = listenedSongsCount.entrySet().stream().limit(5).collect(TreeMap::new, (m, e) -> m.put(e.getKey(), e.getValue()), TreeMap::putAll);
+        topSongs = new LinkedHashMap<>();
+
+        ArrayList<Map.Entry<String, Integer>> entryList = new ArrayList<>(listenedSongsCount.entrySet());
+
+        Collections.sort(entryList, (entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue()));
+
+        int kon = 0;
+        for (Map.Entry<String, Integer> entry : entryList) {
+            topSongs.put(entry.getKey(), entry.getValue());
+            kon++;
+            if (kon == 5) {
+                break;
+            }
+        }
     }
 
     public void setTop5ListenedAlbums() {
-        topAlbums = listenedAlbumsCount.entrySet().stream().limit(5).collect(TreeMap::new, (m, e) -> m.put(e.getKey(), e.getValue()), TreeMap::putAll);
+        topAlbums = new LinkedHashMap<>();
+
+        ArrayList<Map.Entry<String, Integer>> entryList = new ArrayList<>(listenedAlbumsCount.entrySet());
+
+        Collections.sort(entryList, (entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue()));
+
+        int kon = 0;
+        for (Map.Entry<String, Integer> entry : entryList) {
+            topAlbums.put(entry.getKey(), entry.getValue());
+            kon++;
+            if (kon == 5) {
+                break;
+            }
+        }
     }
 
     public void setTop5WatchedEpisodes() {
-        topEpisodes = watchedEpisodesCount.entrySet().stream().limit(5).collect(TreeMap::new, (m, e) -> m.put(e.getKey(), e.getValue()), TreeMap::putAll);
+        topEpisodes = new LinkedHashMap<>();
+
+        ArrayList<Map.Entry<String, Integer>> entryList = new ArrayList<>(watchedEpisodesCount.entrySet());
+
+        Collections.sort(entryList, (entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue()));
+
+        int kon = 0;
+        for (Map.Entry<String, Integer> entry : entryList) {
+            topEpisodes.put(entry.getKey(), entry.getValue());
+            kon++;
+            if (kon == 5) {
+                break;
+            }
+        }
     }
 
 
@@ -121,11 +188,14 @@ public class WrappedUser implements Wrapped {
     @Override
     public void updateWrapped(PlayerSource source, User user) {
         if (source.getType() == Enums.PlayerSourceType.LIBRARY || source.getType() == Enums.PlayerSourceType.ALBUM || source.getType() == Enums.PlayerSourceType.PLAYLIST) {
-            AudioFile audioFile = (AudioFile) source.getAudioFile();
-            addListenedSong((Song) audioFile);
-            addListenedArtist(((Song) audioFile).getArtist());
-            addListenedAlbum(((Song) audioFile).getAlbum());
-            addListenedGenre(((Song) audioFile).getGenre());
+            Song song = (Song) source.getAudioFile();
+
+            // System.out.println(song.getName() + song);
+
+            addListenedSong(song);
+            addListenedArtist(song.getArtist());
+            addListenedAlbum(song.getAlbum());
+            addListenedGenre(song.getGenre());
         } else if (source.getType() == Enums.PlayerSourceType.PODCAST) {
             Episode episode = (Episode) source.getAudioFile();
             addWatchedEpisode(episode);
@@ -139,7 +209,7 @@ public class WrappedUser implements Wrapped {
 
     }
 
-    public void makeFinalWrapped(){
+    public void makeFinalWrapped() {
         setTop5ListenedArtists();
         setTop5ListenedGenres();
         setTop5ListenedSongs();
@@ -147,3 +217,5 @@ public class WrappedUser implements Wrapped {
         setTop5WatchedEpisodes();
     }
 }
+
+// Create a comparator that compares the values of a TreeMap

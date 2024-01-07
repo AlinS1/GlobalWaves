@@ -15,6 +15,7 @@ import app.user.Host;
 import app.user.Merchandise;
 import app.user.User;
 import app.user.UserAbstract;
+import app.wrapped.WrappedArtist;
 import fileio.input.CommandInput;
 import fileio.input.EpisodeInput;
 import fileio.input.PodcastInput;
@@ -22,15 +23,7 @@ import fileio.input.SongInput;
 import fileio.input.UserInput;
 import lombok.Getter;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -873,4 +866,30 @@ public final class Admin {
         }
         return topPlaylists;
     }
+
+
+    // =============== ETAPA 3 ===============
+
+
+
+    public ArrayList<Artist> rankArtistsByMonetization(){
+        ArrayList<Artist> artists = new ArrayList<>(this.artists);
+
+        Iterator<Artist> iterator = artists.iterator();
+        while (iterator.hasNext()) {
+            Artist artist = iterator.next();
+            if (((WrappedArtist) artist.getWrapped()).getAllFans().isEmpty()) {
+                iterator.remove();
+            }
+        }
+
+        artists.sort((artist1, artist2) -> {
+            if (artist1.getTotalRevenueOfArtist() == artist2.getTotalRevenueOfArtist()) {
+                return artist1.getUsername().compareTo(artist2.getUsername());
+            }
+            return (int) (artist2.getTotalRevenueOfArtist() - artist1.getTotalRevenueOfArtist());
+        });
+        return artists;
+    }
+
 }
