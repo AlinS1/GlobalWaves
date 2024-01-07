@@ -811,8 +811,8 @@ public final class CommandRunner {
 
 
         if (!wrapped.verifyWrapped()) {
-            String result = "No data to show for user " + commandInput.getUsername();
-            objectNode.put("result", objectMapper.valueToTree(result));
+            String message = "No data to show for user " + commandInput.getUsername() + ".";
+            objectNode.put("message", objectMapper.valueToTree(message));
         } else {
             wrapped.makeFinalWrapped();
             objectNode.put("result", objectMapper.valueToTree(wrapped));
@@ -826,7 +826,7 @@ public final class CommandRunner {
 
         LinkedHashMap<String, Monetization> monetizationTable = new LinkedHashMap<>();
 
-        for(Artist artist : artistsRanked){
+        for (Artist artist : artistsRanked) {
             artist.getMonetization().setRanking(artistsRanked.indexOf(artist) + 1);
             monetizationTable.put(artist.getUsername(), artist.getMonetization());
         }

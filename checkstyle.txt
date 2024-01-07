@@ -7,8 +7,6 @@ Starting audit...
 [ERROR] D:\Should_be_on_desktop\Facultate\An2_Sem1\POO\OOP-Part3\.\src\app\CommandRunner.java:12:19: Using the '.*' form of import should be avoided - app.wrapped.*. [AvoidStarImport]
 [ERROR] D:\Should_be_on_desktop\Facultate\An2_Sem1\POO\OOP-Part3\.\src\app\CommandRunner.java:788:5: Missing a Javadoc comment. [MissingJavadocMethod]
 [ERROR] D:\Should_be_on_desktop\Facultate\An2_Sem1\POO\OOP-Part3\.\src\app\CommandRunner.java:824:5: Missing a Javadoc comment. [MissingJavadocMethod]
-[ERROR] D:\Should_be_on_desktop\Facultate\An2_Sem1\POO\OOP-Part3\.\src\app\CommandRunner.java:829:9: 'for' is not followed by whitespace. [WhitespaceAround]
-[ERROR] D:\Should_be_on_desktop\Facultate\An2_Sem1\POO\OOP-Part3\.\src\app\CommandRunner.java:829:43: '{' is not preceded with whitespace. [WhitespaceAround]
 [ERROR] D:\Should_be_on_desktop\Facultate\An2_Sem1\POO\OOP-Part3\.\src\app\player\Player.java:172:48: Parameter user should be final. [FinalParameters]
 [ERROR] D:\Should_be_on_desktop\Facultate\An2_Sem1\POO\OOP-Part3\.\src\app\user\Artist.java:135:44: '{' is not preceded with whitespace. [WhitespaceAround]
 [ERROR] D:\Should_be_on_desktop\Facultate\An2_Sem1\POO\OOP-Part3\.\src\app\user\User.java:20:8: Unused import - app.wrapped.Wrapped. [UnusedImports]
@@ -143,6 +141,6 @@ Starting audit...
 [ERROR] D:\Should_be_on_desktop\Facultate\An2_Sem1\POO\OOP-Part3\.\src\app\wrapped\WrappedUser.java:205: Line is longer than 100 characters (found 125). [LineLength]
 [ERROR] D:\Should_be_on_desktop\Facultate\An2_Sem1\POO\OOP-Part3\.\src\app\wrapped\WrappedUser.java:212:5: Class 'WrappedUser' looks like designed for extension (can be subclassed), but the method 'makeFinalWrapped' does not have javadoc that explains how to do that safely. If class is not designed for extension consider making the class 'WrappedUser' final or making the method 'makeFinalWrapped' static/final/abstract/empty, or adding allowed annotation for the method. [DesignForExtension]
 [ERROR] D:\Should_be_on_desktop\Facultate\An2_Sem1\POO\OOP-Part3\.\src\app\wrapped\WrappedUser.java:212:5: Missing a Javadoc comment. [MissingJavadocMethod]
-[ERROR] D:\Should_be_on_desktop\Facultate\An2_Sem1\POO\OOP-Part3\.\src\main\Main.java:60:23: '3' is a magic number. [MagicNumber]
+[ERROR] D:\Should_be_on_desktop\Facultate\An2_Sem1\POO\OOP-Part3\.\src\main\Main.java:60:23: '4' is a magic number. [MagicNumber]
 Audit done.
-Checkstyle ends with 145 errors.
+Checkstyle ends with 143 errors.

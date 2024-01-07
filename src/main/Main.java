@@ -57,7 +57,7 @@ public final class Main {
             }
             kon++;
 
-            if (kon > 3) {
+            if (kon > 5) {
                 break;
             }
 
