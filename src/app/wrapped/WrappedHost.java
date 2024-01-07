@@ -51,6 +51,8 @@ public class WrappedHost implements Wrapped {
     }
 
     public void setTop5Episodes() {
+        topEpisodes = new TreeMap<>();
+
         ArrayList<Map.Entry<String, Integer>> entryList = new ArrayList<>(allEpisodes.entrySet());
 
         Collections.sort(entryList, (entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue()));
@@ -62,7 +64,8 @@ public class WrappedHost implements Wrapped {
             if (kon == 5) {
                 break;
             }
-        }    }
+        }
+    }
 
     public void setNrListens() {
         listeners = allFans.entrySet().size();

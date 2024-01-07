@@ -6,6 +6,7 @@ import app.audio.Collections.Playlist;
 import app.audio.Collections.PlaylistOutput;
 import app.audio.Collections.Podcast;
 import app.audio.Files.AudioFile;
+import app.audio.Files.Episode;
 import app.audio.Files.Song;
 import app.audio.LibraryEntry;
 import app.pages.HomePage;
@@ -612,8 +613,12 @@ public final class User extends UserAbstract {
         }
         if (source.getType() == Enums.PlayerSourceType.PODCAST) {
             Podcast podcast = (Podcast) source.getAudioCollection();
+            System.out.println(podcast.getOwner());
+
             Host host = Admin.getInstance().getHost(podcast.getOwner());
-            host.getWrapped().updateWrapped(source, this);
+            if (host != null) {
+                host.getWrapped().updateWrapped(source, this);
+            }
         }
     }
 }
