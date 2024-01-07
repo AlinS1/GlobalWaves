@@ -37,4 +37,9 @@ public final class LikedContentPage implements Page {
                           followedPlaylists.stream().map(playlist -> "%s - %s"
                           .formatted(playlist.getName(), playlist.getOwner())).toList());
     }
+
+    @Override
+    public String getPageType() {
+        return "likedContentPage";
+    }
 }

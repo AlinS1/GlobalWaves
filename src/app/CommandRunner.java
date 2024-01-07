@@ -837,4 +837,47 @@ public final class CommandRunner {
 
         return objectNode;
     }
+
+    public static ObjectNode subscribe(final CommandInput commandInput) {
+
+        User user = Admin.getInstance().getUser(commandInput.getUsername());
+        String message = null;
+        if(user == null) {
+            message = "The username " + commandInput.getUsername() + " doesn't exist.";
+        } else {
+            if(user.getCurrentPage() == null){
+                message = "To subscribe you need to be on the page of an artist or host.";
+            } else {
+                String pageType = user.getCurrentPage().getPageType();
+                if(pageType.equals("homePage") || pageType.equals("likedContentPage")){
+                    message = "To subscribe you need to be on the page of an artist or host.";
+                } else {
+                    message = user.subscribe();
+                }
+            }
+        }
+
+        ObjectNode objectNode = objectMapper.createObjectNode();
+        objectNode.put("command", commandInput.getCommand());
+        objectNode.put("user", commandInput.getUsername());
+        objectNode.put("timestamp", commandInput.getTimestamp());
+        objectNode.put("message", objectMapper.valueToTree(message));
+
+        return objectNode;
+    }
+
+    public static ObjectNode getNotifications(final CommandInput commandInput) {
+
+        User user = Admin.getInstance().getUser(commandInput.getUsername());
+
+        ObjectNode objectNode = objectMapper.createObjectNode();
+        objectNode.put("command", commandInput.getCommand());
+        objectNode.put("user", commandInput.getUsername());
+        objectNode.put("timestamp", commandInput.getTimestamp());
+        objectNode.put("notifications", objectMapper.valueToTree(user.getNotifications()));
+
+        user.getNotifications().clear();
+
+        return objectNode;
+    }
 }

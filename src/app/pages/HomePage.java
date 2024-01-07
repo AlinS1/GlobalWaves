@@ -39,4 +39,9 @@ public final class HomePage implements Page {
                                   .orElse(0)).limit(limit).map(Playlist::getName)
                           .toList());
     }
+
+    @Override
+    public String getPageType() {
+        return "homePage";
+    }
 }

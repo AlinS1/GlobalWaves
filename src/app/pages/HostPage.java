@@ -35,4 +35,9 @@ public final class HostPage implements Page {
                           .formatted(announcement.getName(), announcement.getDescription()))
                           .toList());
     }
+
+    @Override
+    public String getPageType() {
+        return "hostPage";
+    }
 }

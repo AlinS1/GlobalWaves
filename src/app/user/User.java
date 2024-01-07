@@ -6,7 +6,6 @@ import app.audio.Collections.Playlist;
 import app.audio.Collections.PlaylistOutput;
 import app.audio.Collections.Podcast;
 import app.audio.Files.AudioFile;
-import app.audio.Files.Episode;
 import app.audio.Files.Song;
 import app.audio.LibraryEntry;
 import app.pages.HomePage;
@@ -18,8 +17,7 @@ import app.player.PlayerStats;
 import app.searchBar.Filters;
 import app.searchBar.SearchBar;
 import app.utils.Enums;
-import app.wrapped.Wrapped;
-import app.wrapped.WrappedUser;
+import app.wrapped.Notification;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -51,6 +49,11 @@ public final class User extends UserAbstract {
     @Getter
     @Setter
     private LikedContentPage likedContentPage;
+
+    @Getter
+    @Setter
+    ArrayList<Notification> notifications = new ArrayList<Notification>();
+
 
     /**
      * Instantiates a new User.
@@ -621,4 +624,23 @@ public final class User extends UserAbstract {
             }
         }
     }
+
+    public String subscribe() {
+
+        String message = this.getUsername();
+        if(searchBar.getLastContentCreatorSelected().addSubscriber(this)){
+            message += " subscribed to " + searchBar.getLastContentCreatorSelected().getUsername();
+        } else {
+            message += " unsubscribed from " + searchBar.getLastContentCreatorSelected().getUsername();
+        }
+        message += " successfully.";
+
+        return message;
+    }
+
+    public void addNotification(String name, String description){
+        Notification notification = new Notification(name, description);
+        notifications.add(notification);
+    }
+
 }

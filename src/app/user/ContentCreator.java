@@ -1,13 +1,26 @@
 package app.user;
 
 import app.pages.Page;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.ArrayList;
 
 /**
  * The type Content creator.
  */
 public abstract class ContentCreator extends UserAbstract {
+
+    @Setter
+    @Getter
     private String description;
+
+    @Setter
+    @Getter
     private Page page;
+
+    @Getter
+    private ArrayList<User> subscribers = new ArrayList<>();
 
     /**
      * Instantiates a new Content creator.
@@ -20,39 +33,13 @@ public abstract class ContentCreator extends UserAbstract {
         super(username, age, city);
     }
 
-    /**
-     * Gets description.
-     *
-     * @return the description
-     */
-    public String getDescription() {
-        return description;
-    }
 
-    /**
-     * Sets description.
-     *
-     * @param description the description
-     */
-    public void setDescription(final String description) {
-        this.description = description;
-    }
-
-    /**
-     * Gets page.
-     *
-     * @return the page
-     */
-    public Page getPage() {
-        return page;
-    }
-
-    /**
-     * Sets page.
-     *
-     * @param page the page
-     */
-    public void setPage(final Page page) {
-        this.page = page;
+    public boolean addSubscriber(final User user) {
+        if (subscribers.contains(user)) {
+            subscribers.remove(user);
+            return false;
+        }
+        subscribers.add(user);
+        return true;
     }
 }

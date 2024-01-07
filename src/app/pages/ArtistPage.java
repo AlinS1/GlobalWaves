@@ -41,4 +41,9 @@ public final class ArtistPage implements Page {
                                             event.getDescription()))
                                  .toList());
     }
+
+    @Override
+    public String getPageType() {
+        return "artistPage";
+    }
 }

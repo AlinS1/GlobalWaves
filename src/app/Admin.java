@@ -388,6 +388,11 @@ public final class Admin {
                                                 username,
                                                 newSongs,
                                                 commandInput.getReleaseYear()));
+
+        for(User subscriber : currentArtist.getSubscribers()) {
+            subscriber.addNotification("New Album", "New Album from " + currentArtist.getUsername() + ".");
+        }
+
         return "%s has added new album successfully.".formatted(username);
     }
 
@@ -478,6 +483,10 @@ public final class Admin {
         currentHost.getPodcasts().add(newPodcast);
         podcasts.add(newPodcast);
 
+        for(User subscriber : currentHost.getSubscribers()) {
+            subscriber.addNotification("New Podcast", "New Podcast from " + currentHost.getUsername() + ".");
+        }
+
         return "%s has added new podcast successfully.".formatted(username);
     }
 
@@ -547,6 +556,11 @@ public final class Admin {
         currentArtist.getEvents().add(new Event(eventName,
                                                 commandInput.getDescription(),
                                                 commandInput.getDate()));
+
+        for(User subscriber : currentArtist.getSubscribers()) {
+            subscriber.addNotification("New Event", "New Event from " + currentArtist.getUsername() +".");
+        }
+
         return "%s has added new event successfully.".formatted(username);
     }
 
@@ -631,6 +645,11 @@ public final class Admin {
         currentArtist.getMerch().add(new Merchandise(commandInput.getName(),
                                                      commandInput.getDescription(),
                                                      commandInput.getPrice()));
+
+        for(User subscriber : currentArtist.getSubscribers()) {
+            subscriber.addNotification("New Merchandise", "New Merchandise from " + currentArtist.getUsername() +".");
+        }
+
         return "%s has added new merchandise successfully.".formatted(username);
     }
 
@@ -661,6 +680,11 @@ public final class Admin {
 
         currentHost.getAnnouncements().add(new Announcement(announcementName,
                                                             announcementDescription));
+
+        for(User subscriber : currentHost.getSubscribers()) {
+            subscriber.addNotification("New Announcement", "New Announcement from " + currentHost.getUsername() + ".");
+        }
+
         return "%s has successfully added new announcement.".formatted(username);
     }
 
