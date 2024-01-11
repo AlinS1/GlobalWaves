@@ -24,6 +24,7 @@ public final class CommandInput {
     private ArrayList<SongInput> songs;
     private Integer releaseYear;
     private String nextPage;
+    private String recommendationType;
 
     public CommandInput() {
     }
@@ -185,6 +186,14 @@ public final class CommandInput {
 
     public void setNextPage(final String nextPage) {
         this.nextPage = nextPage;
+    }
+
+    public String getRecommendationType() {
+        return recommendationType;
+    }
+
+    public void setRecommendationType(String recommendationType) {
+        this.recommendationType = recommendationType;
     }
 
     @Override

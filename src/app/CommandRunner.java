@@ -880,4 +880,31 @@ public final class CommandRunner {
 
         return objectNode;
     }
+
+    public static ObjectNode previousPage(final CommandInput commandInput) {
+
+        User user = Admin.getInstance().getUser(commandInput.getUsername());
+
+        ObjectNode objectNode = objectMapper.createObjectNode();
+        objectNode.put("command", commandInput.getCommand());
+        objectNode.put("user", commandInput.getUsername());
+        objectNode.put("timestamp", commandInput.getTimestamp());
+        objectNode.put("message", objectMapper.valueToTree(user.previousPage()));
+
+        return objectNode;
+    }
+
+    public static ObjectNode nextPage(final CommandInput commandInput) {
+
+        User user = Admin.getInstance().getUser(commandInput.getUsername());
+
+        ObjectNode objectNode = objectMapper.createObjectNode();
+        objectNode.put("command", commandInput.getCommand());
+        objectNode.put("user", commandInput.getUsername());
+        objectNode.put("timestamp", commandInput.getTimestamp());
+        objectNode.put("message", objectMapper.valueToTree(user.nextPage()));
+
+
+        return objectNode;
+    }
 }

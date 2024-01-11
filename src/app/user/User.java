@@ -18,6 +18,7 @@ import app.searchBar.Filters;
 import app.searchBar.SearchBar;
 import app.utils.Enums;
 import app.wrapped.Notification;
+import app.wrapped.PageHistory;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -53,6 +54,8 @@ public final class User extends UserAbstract {
     @Getter
     @Setter
     ArrayList<Notification> notifications = new ArrayList<Notification>();
+    @Getter
+    PageHistory pageHistory = new PageHistory();
 
 
     /**
@@ -74,6 +77,7 @@ public final class User extends UserAbstract {
 
         homePage = new HomePage(this);
         currentPage = homePage;
+        pageHistory.addPage(currentPage);
         likedContentPage = new LikedContentPage(this);
     }
 
@@ -140,6 +144,7 @@ public final class User extends UserAbstract {
             }
 
             currentPage = selected.getPage();
+            pageHistory.addPage(currentPage);
             return "Successfully selected %s's page.".formatted(selected.getUsername());
         } else {
             LibraryEntry selected = searchBar.select(itemNumber);
@@ -641,6 +646,22 @@ public final class User extends UserAbstract {
     public void addNotification(String name, String description){
         Notification notification = new Notification(name, description);
         notifications.add(notification);
+    }
+
+    public String previousPage(){
+        if(pageHistory.getPreviousPage() != null){
+            currentPage = pageHistory.getPreviousPage();
+            return "The user " + getUsername() + " has navigated successfully to the previous page.";
+        }
+        return "There are no pages left to go back.";
+    }
+
+    public String nextPage(){
+        if(pageHistory.getNextPage() != null){
+            currentPage = pageHistory.getNextPage();
+            return "The user " + getUsername() + " has navigated successfully to the next page.";
+        }
+        return "There are no pages left to go forward.";
     }
 
 }

@@ -57,7 +57,7 @@ public final class Main {
             }
             kon++;
 
-            if (kon > 11) {
+            if (kon > 15) {
                 break;
             }
 
@@ -148,6 +148,10 @@ public final class Main {
                 case "wrapped" -> outputs.add(CommandRunner.wrapped(command));
                 case "subscribe" -> outputs.add(CommandRunner.subscribe(command));
                 case "getNotifications" ->  outputs.add(CommandRunner.getNotifications(command));
+
+                case "previousPage" -> outputs.add(CommandRunner.previousPage(command));
+                case "nextPage" -> outputs.add(CommandRunner.nextPage(command));
+
 
                 default -> System.out.println("Invalid command " + commandName);
             }

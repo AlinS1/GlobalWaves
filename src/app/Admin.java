@@ -15,6 +15,7 @@ import app.user.Host;
 import app.user.Merchandise;
 import app.user.User;
 import app.user.UserAbstract;
+import app.wrapped.PageHistory;
 import app.wrapped.WrappedArtist;
 import fileio.input.CommandInput;
 import fileio.input.EpisodeInput;
@@ -742,11 +743,14 @@ public final class Admin {
         switch (nextPage) {
             case "Home" -> user.setCurrentPage(user.getHomePage());
             case "LikedContent" -> user.setCurrentPage(user.getLikedContentPage());
+            case "Artist" -> user.setCurrentPage(getArtist(((Song)user.getPlayer().getSource().getAudioFile()).getArtist()).getPage());
+            case "Host" -> user.setCurrentPage(getHost(((Podcast)(user.getPlayer().getSource().getAudioCollection())).getOwner()).getPage());
             default -> {
                 return "%s is trying to access a non-existent page.".formatted(username);
             }
         }
 
+        user.getPageHistory().addPage(user.getCurrentPage());
         return "%s accessed %s successfully.".formatted(username, nextPage);
     }
 
