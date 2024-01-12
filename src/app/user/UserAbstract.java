@@ -47,13 +47,12 @@ public abstract class UserAbstract {
     public abstract String userType();
 
 
-
     // ====================== ETAPA 3 ====================== //
-    public Wrapped getWrapped(){
+    public Wrapped getWrapped() {
         return wrapped;
     }
 
-    public Wrapped setWrapped(String userType) {
+    public Wrapped setWrapped(final String userType) {
         switch (userType) {
             case "user":
                 return new WrappedUser("user");
@@ -61,8 +60,9 @@ public abstract class UserAbstract {
                 return new WrappedArtist("artist");
             case "host":
                 return new WrappedHost("host");
+            default:
+                return null;
         }
-        return null;
     }
 
 

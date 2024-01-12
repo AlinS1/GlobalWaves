@@ -42,7 +42,7 @@ public class WrappedUser implements Wrapped {
     private LinkedHashMap<String, Integer> topEpisodes;
 
 
-    public WrappedUser(String userType) {
+    public WrappedUser(final String userType) {
         this.userType = userType;
     }
 
@@ -51,7 +51,7 @@ public class WrappedUser implements Wrapped {
         return userType;
     }
 
-    public void addListenedArtist(String artist) {
+    public void addListenedArtist(final String artist) {
         if (listenedArtistsCount.containsKey(artist)) {
             listenedArtistsCount.put(artist, listenedArtistsCount.get(artist) + 1);
         } else {
@@ -59,7 +59,7 @@ public class WrappedUser implements Wrapped {
         }
     }
 
-    public void addListenedGenre(String genre) {
+    public void addListenedGenre(final String genre) {
         if (listenedGenresCount.containsKey(genre)) {
             listenedGenresCount.put(genre, listenedGenresCount.get(genre) + 1);
         } else {
@@ -67,7 +67,7 @@ public class WrappedUser implements Wrapped {
         }
     }
 
-    public void addListenedSong(Song song) {
+    public void addListenedSong(final Song song) {
         if (listenedSongsCount.containsKey(song.getName())) {
             listenedSongsCount.put(song.getName(), listenedSongsCount.get(song.getName()) + 1);
         } else {
@@ -75,7 +75,7 @@ public class WrappedUser implements Wrapped {
         }
     }
 
-    public void addListenedAlbum(String album) {
+    public void addListenedAlbum(final String album) {
         if (listenedAlbumsCount.containsKey(album)) {
             listenedAlbumsCount.put(album, listenedAlbumsCount.get(album) + 1);
         } else {
@@ -83,9 +83,10 @@ public class WrappedUser implements Wrapped {
         }
     }
 
-    public void addWatchedEpisode(Episode episode) {
+    public void addWatchedEpisode(final Episode episode) {
         if (watchedEpisodesCount.containsKey(episode.getName())) {
-            watchedEpisodesCount.put(episode.getName(), watchedEpisodesCount.get(episode.getName()) + 1);
+            watchedEpisodesCount.put(episode.getName(),
+                    watchedEpisodesCount.get(episode.getName()) + 1);
         } else {
             watchedEpisodesCount.put(episode.getName(), 1);
         }
@@ -94,15 +95,17 @@ public class WrappedUser implements Wrapped {
     public void setTop5ListenedArtists() {
         topArtists = new LinkedHashMap<>();
 
-        ArrayList<Map.Entry<String, Integer>> entryList = new ArrayList<>(listenedArtistsCount.entrySet());
+        ArrayList<Map.Entry<String, Integer>> entryList =
+                new ArrayList<>(listenedArtistsCount.entrySet());
 
-        Collections.sort(entryList, (entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue()));
+        Collections.sort(entryList,
+                (entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue()));
 
         int kon = 0;
         for (Map.Entry<String, Integer> entry : entryList) {
             topArtists.put(entry.getKey(), entry.getValue());
             kon++;
-            if (kon == 5) {
+            if (kon == limit) {
                 break;
             }
         }
@@ -111,15 +114,17 @@ public class WrappedUser implements Wrapped {
     public void setTop5ListenedGenres() {
         topGenres = new LinkedHashMap<>();
 
-        ArrayList<Map.Entry<String, Integer>> entryList = new ArrayList<>(listenedGenresCount.entrySet());
+        ArrayList<Map.Entry<String, Integer>> entryList =
+                new ArrayList<>(listenedGenresCount.entrySet());
 
-        Collections.sort(entryList, (entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue()));
+        Collections.sort(entryList,
+                (entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue()));
 
         int kon = 0;
         for (Map.Entry<String, Integer> entry : entryList) {
             topGenres.put(entry.getKey(), entry.getValue());
             kon++;
-            if (kon == 5) {
+            if (kon == limit) {
                 break;
             }
         }
@@ -128,15 +133,17 @@ public class WrappedUser implements Wrapped {
     public void setTop5ListenedSongs() {
         topSongs = new LinkedHashMap<>();
 
-        ArrayList<Map.Entry<String, Integer>> entryList = new ArrayList<>(listenedSongsCount.entrySet());
+        ArrayList<Map.Entry<String, Integer>> entryList =
+                new ArrayList<>(listenedSongsCount.entrySet());
 
-        Collections.sort(entryList, (entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue()));
+        Collections.sort(entryList,
+                (entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue()));
 
         int kon = 0;
         for (Map.Entry<String, Integer> entry : entryList) {
             topSongs.put(entry.getKey(), entry.getValue());
             kon++;
-            if (kon == 5) {
+            if (kon == limit) {
                 break;
             }
         }
@@ -145,15 +152,17 @@ public class WrappedUser implements Wrapped {
     public void setTop5ListenedAlbums() {
         topAlbums = new LinkedHashMap<>();
 
-        ArrayList<Map.Entry<String, Integer>> entryList = new ArrayList<>(listenedAlbumsCount.entrySet());
+        ArrayList<Map.Entry<String, Integer>> entryList =
+                new ArrayList<>(listenedAlbumsCount.entrySet());
 
-        Collections.sort(entryList, (entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue()));
+        Collections.sort(entryList,
+                (entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue()));
 
         int kon = 0;
         for (Map.Entry<String, Integer> entry : entryList) {
             topAlbums.put(entry.getKey(), entry.getValue());
             kon++;
-            if (kon == 5) {
+            if (kon == limit) {
                 break;
             }
         }
@@ -162,15 +171,17 @@ public class WrappedUser implements Wrapped {
     public void setTop5WatchedEpisodes() {
         topEpisodes = new LinkedHashMap<>();
 
-        ArrayList<Map.Entry<String, Integer>> entryList = new ArrayList<>(watchedEpisodesCount.entrySet());
+        ArrayList<Map.Entry<String, Integer>> entryList =
+                new ArrayList<>(watchedEpisodesCount.entrySet());
 
-        Collections.sort(entryList, (entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue()));
+        Collections.sort(entryList,
+                (entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue()));
 
         int kon = 0;
         for (Map.Entry<String, Integer> entry : entryList) {
             topEpisodes.put(entry.getKey(), entry.getValue());
             kon++;
-            if (kon == 5) {
+            if (kon == limit) {
                 break;
             }
         }
@@ -179,15 +190,19 @@ public class WrappedUser implements Wrapped {
 
     @Override
     public boolean verifyWrapped() {
-        if (listenedArtistsCount.size() == 0 && listenedGenresCount.size() == 0 && listenedSongsCount.size() == 0 && listenedAlbumsCount.size() == 0 && watchedEpisodesCount.size() == 0) {
+        if (listenedArtistsCount.isEmpty() && listenedGenresCount.isEmpty()
+                && listenedSongsCount.isEmpty() && listenedAlbumsCount.isEmpty()
+                && watchedEpisodesCount.isEmpty()) {
             return false;
         }
         return true;
     }
 
     @Override
-    public void updateWrapped(PlayerSource source, User user) {
-        if (source.getType() == Enums.PlayerSourceType.LIBRARY || source.getType() == Enums.PlayerSourceType.ALBUM || source.getType() == Enums.PlayerSourceType.PLAYLIST) {
+    public void updateWrapped(final PlayerSource source, final User user) {
+        if (source.getType() == Enums.PlayerSourceType.LIBRARY
+                || source.getType() == Enums.PlayerSourceType.ALBUM
+                || source.getType() == Enums.PlayerSourceType.PLAYLIST) {
             Song song = (Song) source.getAudioFile();
 
             // System.out.println(song.getName() + song);
@@ -202,7 +217,8 @@ public class WrappedUser implements Wrapped {
             // update of host...
         }
 
-//        else if (source.getType() == Enums.PlayerSourceType.PLAYLIST || source.getType() == Enums.PlayerSourceType.ALBUM) {
+//        else if (source.getType() == Enums.PlayerSourceType.PLAYLIST ||
+//        source.getType() == Enums.PlayerSourceType.ALBUM) {
 //            AudioCollection audioCollection = source.getAudioCollection();
 //
 //        }

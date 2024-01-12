@@ -169,7 +169,7 @@ public final class Player {
      *
      * @param time the time
      */
-    public void simulatePlayer(final int time, User user) {
+    public void simulatePlayer(final int time, final User user) {
         int elapsedTime = time;
         if (!paused) {
             while (elapsedTime >= source.getDuration()) {

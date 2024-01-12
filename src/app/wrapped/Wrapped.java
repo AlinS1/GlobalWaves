@@ -7,13 +7,18 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.ToString;
 
 import java.nio.file.attribute.UserDefinedFileAttributeView;
+
 public interface Wrapped {
+    int limit = 5;
     @JsonIgnore
     public String getUserType();
+
     @JsonIgnore
     public boolean verifyWrapped();
+
     @JsonIgnore
     public void updateWrapped(PlayerSource source, User user);
+
     @JsonIgnore
     public void makeFinalWrapped();
 }

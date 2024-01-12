@@ -15,7 +15,6 @@ import app.user.Host;
 import app.user.Merchandise;
 import app.user.User;
 import app.user.UserAbstract;
-import app.wrapped.PageHistory;
 import app.wrapped.WrappedArtist;
 import fileio.input.CommandInput;
 import fileio.input.EpisodeInput;
@@ -24,9 +23,18 @@ import fileio.input.SongInput;
 import fileio.input.UserInput;
 import lombok.Getter;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Stream;
+import java.util.stream.Collectors;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Iterator;
 
 /**
  * The type Admin.
@@ -391,7 +399,8 @@ public final class Admin {
                 commandInput.getReleaseYear()));
 
         for (User subscriber : currentArtist.getSubscribers()) {
-            subscriber.addNotification("New Album", "New Album from " + currentArtist.getUsername() + ".");
+            subscriber.addNotification("New Album",
+                    "New Album from " + currentArtist.getUsername() + ".");
         }
 
         return "%s has added new album successfully.".formatted(username);
@@ -485,7 +494,8 @@ public final class Admin {
         podcasts.add(newPodcast);
 
         for (User subscriber : currentHost.getSubscribers()) {
-            subscriber.addNotification("New Podcast", "New Podcast from " + currentHost.getUsername() + ".");
+            subscriber.addNotification("New Podcast",
+                    "New Podcast from " + currentHost.getUsername() + ".");
         }
 
         return "%s has added new podcast successfully.".formatted(username);
@@ -559,7 +569,8 @@ public final class Admin {
                 commandInput.getDate()));
 
         for (User subscriber : currentArtist.getSubscribers()) {
-            subscriber.addNotification("New Event", "New Event from " + currentArtist.getUsername() + ".");
+            subscriber.addNotification("New Event",
+                    "New Event from " + currentArtist.getUsername() + ".");
         }
 
         return "%s has added new event successfully.".formatted(username);
@@ -648,7 +659,8 @@ public final class Admin {
                 commandInput.getPrice()));
 
         for (User subscriber : currentArtist.getSubscribers()) {
-            subscriber.addNotification("New Merchandise", "New Merchandise from " + currentArtist.getUsername() + ".");
+            subscriber.addNotification("New Merchandise",
+                    "New Merchandise from " + currentArtist.getUsername() + ".");
         }
 
         return "%s has added new merchandise successfully.".formatted(username);
@@ -683,7 +695,8 @@ public final class Admin {
                 announcementDescription));
 
         for (User subscriber : currentHost.getSubscribers()) {
-            subscriber.addNotification("New Announcement", "New Announcement from " + currentHost.getUsername() + ".");
+            subscriber.addNotification("New Announcement",
+                    "New Announcement from " + currentHost.getUsername() + ".");
         }
 
         return "%s has successfully added new announcement.".formatted(username);
@@ -743,10 +756,10 @@ public final class Admin {
         switch (nextPage) {
             case "Home" -> user.setCurrentPage(user.getHomePage());
             case "LikedContent" -> user.setCurrentPage(user.getLikedContentPage());
-            case "Artist" ->
-                    user.setCurrentPage(getArtist(((Song) user.getPlayer().getSource().getAudioFile()).getArtist()).getPage());
-            case "Host" ->
-                    user.setCurrentPage(getHost(((Podcast) (user.getPlayer().getSource().getAudioCollection())).getOwner()).getPage());
+            case "Artist" -> user.setCurrentPage(getArtist(
+                    ((Song) user.getPlayer().getSource().getAudioFile()).getArtist()).getPage());
+            case "Host" -> user.setCurrentPage(getHost(((Podcast) (user.getPlayer().getSource()
+                    .getAudioCollection())).getOwner()).getPage());
             default -> {
                 return "%s is trying to access a non-existent page.".formatted(username);
             }
@@ -906,37 +919,41 @@ public final class Admin {
 
 
     public ArrayList<Artist> rankArtistsByMonetization() {
-        ArrayList<Artist> artists = new ArrayList<>(this.artists);
+        ArrayList<Artist> artistsRanked = new ArrayList<>(this.artists);
 
-        Iterator<Artist> iterator = artists.iterator();
+        Iterator<Artist> iterator = artistsRanked.iterator();
         while (iterator.hasNext()) {
             Artist artist = iterator.next();
-            if (((WrappedArtist) artist.getWrapped()).getAllFans().isEmpty() && artist.getMonetization().getMerchRevenue() == 0) {
+            if (((WrappedArtist) artist.getWrapped()).getAllFans().isEmpty()
+                    && artist.getMonetization().getMerchRevenue() == 0) {
                 iterator.remove();
             }
         }
 
-        artists.sort((artist1, artist2) -> {
+        artistsRanked.sort((artist1, artist2) -> {
             if (artist1.getTotalRevenueOfArtist() == artist2.getTotalRevenueOfArtist()) {
                 return artist1.getUsername().compareTo(artist2.getUsername());
             }
             return (int) (artist2.getTotalRevenueOfArtist() - artist1.getTotalRevenueOfArtist());
         });
-        return artists;
+        return artistsRanked;
     }
 
-    public List<Song> getSongsByGenre(String genre) {
-        List<Song> songs = new ArrayList<>(this.songs);
-        return songs.stream().filter(song -> song.getGenre().equals(genre)).toList();
+    public List<Song> getSongsByGenre(final String genre) {
+        List<Song> filteredSongs = new ArrayList<>(this.songs);
+        return filteredSongs.stream().filter(song -> song.getGenre().equals(genre)).toList();
     }
 
-    public List<Song> createPlaylistByGenre(String genre, int numberOfSongs) {
+    public List<Song> createPlaylistByGenre(final String genre, final int numberOfSongs) {
         ArrayList<Song> allSongs = new ArrayList<>(this.songs);
-        List<Song> newList = allSongs.stream().filter(song -> song.getGenre().equals(genre)).sorted(Comparator.comparingInt(Song::getLikes).reversed()).limit(numberOfSongs).collect(Collectors.toList());
-        if (allSongs.size() == 0)
+        List<Song> newList = allSongs.stream().filter(song -> song.getGenre().equals(genre))
+                .sorted(Comparator.comparingInt(Song::getLikes).reversed()).limit(numberOfSongs)
+                .collect(Collectors.toList());
+        if (allSongs.size() == 0) {
             return null;
-        else
+        } else {
             return newList;
+        }
 
 
     }

@@ -25,20 +25,22 @@ public class PageHistory {
 
 
     public Page getPreviousPage() {
-        if (currentPos <= 0)
+        if (currentPos <= 0) {
             return null;
+        }
         currentPos--;
         return pages.get(currentPos);
     }
 
     public Page getNextPage() {
-        if (currentPos >= pages.size() - 1)
+        if (currentPos >= pages.size() - 1) {
             return null;
+        }
         currentPos++;
         return pages.get(currentPos);
     }
 
-    public void printHistory(){
+    public void printHistory() {
         System.out.println("============== Current pos" + currentPos);
         for (int i = 0; i < pages.size(); i++) {
             System.out.println(pages.get(i).getPageType());

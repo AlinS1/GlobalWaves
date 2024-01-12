@@ -58,11 +58,11 @@ public final class User extends UserAbstract {
 
     @Getter
     @Setter
-    ArrayList<Notification> notifications = new ArrayList<Notification>();
+    private ArrayList<Notification> notifications = new ArrayList<Notification>();
     @Getter
-    PageHistory pageHistory = new PageHistory();
+    private PageHistory pageHistory = new PageHistory();
     @Getter
-    List<String> boughtMerch = new ArrayList<String>();
+    private List<String> boughtMerch = new ArrayList<String>();
 
 
     /**
@@ -616,12 +616,15 @@ public final class User extends UserAbstract {
     }
 
     // ===================== ETAPA 3 =====================
-    public void updateWrapped(PlayerSource source) {
-        if (source == null || source.getAudioFile() == null)
+    public void updateWrapped(final PlayerSource source) {
+        if (source == null || source.getAudioFile() == null) {
             return;
+        }
         this.wrapped.updateWrapped(source, this);
 
-        if (source.getType() == Enums.PlayerSourceType.LIBRARY || source.getType() == Enums.PlayerSourceType.ALBUM || source.getType() == Enums.PlayerSourceType.PLAYLIST) {
+        if (source.getType() == Enums.PlayerSourceType.LIBRARY
+                || source.getType() == Enums.PlayerSourceType.ALBUM
+                || source.getType() == Enums.PlayerSourceType.PLAYLIST) {
             AudioFile audioFile = (AudioFile) source.getAudioFile();
             Artist artist = Admin.getInstance().getArtist(((Song) audioFile).getArtist());
             artist.getWrapped().updateWrapped(source, this);
@@ -638,19 +641,19 @@ public final class User extends UserAbstract {
     }
 
     public String subscribe() {
-
         String message = this.getUsername();
         if (searchBar.getLastContentCreatorSelected().addSubscriber(this)) {
             message += " subscribed to " + searchBar.getLastContentCreatorSelected().getUsername();
         } else {
-            message += " unsubscribed from " + searchBar.getLastContentCreatorSelected().getUsername();
+            message +=
+                    " unsubscribed from " + searchBar.getLastContentCreatorSelected().getUsername();
         }
         message += " successfully.";
 
         return message;
     }
 
-    public void addNotification(String name, String description) {
+    public void addNotification(final String name, final String description) {
         Notification notification = new Notification(name, description);
         notifications.add(notification);
     }
@@ -663,7 +666,8 @@ public final class User extends UserAbstract {
 //            System.out.println("previousPage");
 //            getPageHistory().printHistory();
 
-            return "The user " + getUsername() + " has navigated successfully to the previous page.";
+            return "The user " + getUsername()
+                    + " has navigated successfully to the previous page.";
         }
         return "There are no pages left to go back.";
     }
@@ -677,14 +681,17 @@ public final class User extends UserAbstract {
         return "There are no pages left to go forward.";
     }
 
-    public void updateRecommendations(CommandInput cmd) {
+    public void updateRecommendations(final CommandInput cmd) {
         String recommendationType = cmd.getRecommendationType();
         if (recommendationType.equals("random_song")) {
-            int listenedTime = player.getCurrentAudioFile().getDuration() - player.getSource().getDuration();
-            if (listenedTime < 30) {
+            int listenedTime =
+                    player.getCurrentAudioFile().getDuration() - player.getSource().getDuration();
+            if (listenedTime < homePage.getLimitDuration()) {
                 homePage.updateSongRecommendation((Song) player.getCurrentAudioFile());
             } else {
-                List<Song> songsbyGenre = Admin.getInstance().getSongsByGenre(((Song) (player.getCurrentAudioFile())).getGenre());
+                List<Song> songsbyGenre = Admin.getInstance()
+                                               .getSongsByGenre(
+                                                       ((Song) (player.getCurrentAudioFile())).getGenre());
                 Random random = new Random(listenedTime);
                 int idx = random.nextInt(songsbyGenre.size());
                 homePage.updateSongRecommendation(songsbyGenre.get(idx));
@@ -693,14 +700,17 @@ public final class User extends UserAbstract {
         }
         if (recommendationType.equals("random_playlist")) {
             ArrayList<String> top3Genres = getTop3Genres();
-            Playlist playlistRandom = new Playlist(getUsername() + "'s recommendations", getUsername(), cmd.getTimestamp());
+            Playlist playlistRandom =
+                    new Playlist(getUsername() + "'s recommendations", getUsername(),
+                            cmd.getTimestamp());
 
-            int kon = 5;
+            int kon = homePage.getLimit();
             for (int i = 0; i < top3Genres.size(); i++) {
                 List<Song> list = Admin.getInstance().createPlaylistByGenre(top3Genres.get(i), kon);
                 kon -= 2;
-                if (list != null)
+                if (list != null) {
                     playlistRandom.getSongs().addAll(list);
+                }
             }
 
             homePage.updatePlaylistRecommendation(playlistRandom, recommendationType);
@@ -714,7 +724,9 @@ public final class User extends UserAbstract {
             wrappedArtist.makeFinalWrapped();
             ArrayList<String> top5Fans = wrappedArtist.getTopFans();
 
-            Playlist playlistFans = new Playlist(artistCurrent + " Fan Club recommendations", getUsername(), cmd.getTimestamp());
+            Playlist playlistFans =
+                    new Playlist(artistCurrent + " Fan Club recommendations", getUsername(),
+                            cmd.getTimestamp());
             for (String fan : top5Fans) {
                 User user = Admin.getInstance().getUser(fan);
                 playlistFans.getSongs().addAll(user.getTop5LikedSongs());
@@ -727,13 +739,19 @@ public final class User extends UserAbstract {
     public ArrayList<Song> getTop5LikedSongs() {
         ArrayList<Song> songs = new ArrayList<>(this.likedSongs);
         songs.sort(Comparator.comparingInt(Song::getLikes).reversed());
-        return songs.stream().limit(5).collect(Collectors.toCollection(ArrayList::new));
+        return songs.stream().limit(homePage.getLimit())
+                    .collect(Collectors.toCollection(ArrayList::new));
     }
 
     public ArrayList<String> getTop3Genres() {
-        Map<String, List<Song>> collectLikedSongs = likedSongs.stream().collect(Collectors.groupingBy(Song::getGenre));
-        Map<String, List<Song>> collectFollowedPlaylists = followedPlaylists.stream().flatMap(playlist -> playlist.getSongs().stream()).collect(Collectors.groupingBy(Song::getGenre));
-        Map<String, List<Song>> collectCreatedPlaylists = playlists.stream().flatMap(playlist -> playlist.getSongs().stream()).collect(Collectors.groupingBy(Song::getGenre));
+        Map<String, List<Song>> collectLikedSongs =
+                likedSongs.stream().collect(Collectors.groupingBy(Song::getGenre));
+        Map<String, List<Song>> collectFollowedPlaylists =
+                followedPlaylists.stream().flatMap(playlist -> playlist.getSongs().stream())
+                                 .collect(Collectors.groupingBy(Song::getGenre));
+        Map<String, List<Song>> collectCreatedPlaylists =
+                playlists.stream().flatMap(playlist -> playlist.getSongs().stream())
+                         .collect(Collectors.groupingBy(Song::getGenre));
 
         Map<String, List<Song>> collectAll = new HashMap<>(collectLikedSongs);
         for (Map.Entry<String, List<Song>> entry : collectFollowedPlaylists.entrySet()) {
@@ -751,8 +769,13 @@ public final class User extends UserAbstract {
             }
         }
 
-        Stream<Map.Entry<String, List<Song>>> all = collectAll.entrySet().stream().sorted(Comparator.comparingInt(entry -> entry.getValue().size())).limit(3);
-        ArrayList<String> top3Genres = all.map(Map.Entry::getKey).collect(Collectors.toCollection(ArrayList::new));
+        Stream<Map.Entry<String, List<Song>>> all = collectAll.entrySet().stream()
+                                                              .sorted(Comparator.comparingInt(
+                                                                      entry -> entry.getValue()
+                                                                                    .size()))
+                                                              .limit(homePage.getLimitGenre());
+        ArrayList<String> top3Genres =
+                all.map(Map.Entry::getKey).collect(Collectors.toCollection(ArrayList::new));
         return top3Genres;
     }
 
@@ -783,7 +806,7 @@ public final class User extends UserAbstract {
         return "Playback loaded successfully.";
     }
 
-    public String buyMerch(String merchName) {
+    public String buyMerch(final String merchName) {
         if (!currentPage.getPageType().equals("artistPage")) {
             return "Cannot buy merch from this page.";
         }
@@ -794,14 +817,15 @@ public final class User extends UserAbstract {
         }
         boughtMerch.add(merch.getName());
 
-        for(Artist artist : Admin.getInstance().getArtists()){
-            if(artist.getPage() == currentPage){
+        for (Artist artist : Admin.getInstance().getArtists()) {
+            if (artist.getPage() == currentPage) {
                 artist.buyMerch(merch);
                 return getUsername() + " has added new merch successfully.";
             }
         }
         return "not found";
     }
+
 
 
 }

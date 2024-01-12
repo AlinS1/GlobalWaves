@@ -132,11 +132,11 @@ public final class Artist extends ContentCreator {
 
     // ====================== ETAPA 3 ====================== //
 
-    public double getTotalRevenueOfArtist(){
+    public double getTotalRevenueOfArtist() {
         return monetization.getSongRevenue() + monetization.getMerchRevenue();
     }
 
-    public void buyMerch(Merchandise merch){
-        monetization.addMerchRevenue(merch.getPrice());
+    public void buyMerch(final Merchandise merchItem) {
+        monetization.addMerchRevenue(merchItem.getPrice());
     }
 }

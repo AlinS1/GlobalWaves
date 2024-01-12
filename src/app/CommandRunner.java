@@ -8,8 +8,8 @@ import app.searchBar.Filters;
 import app.user.Artist;
 import app.user.Host;
 import app.user.User;
-import app.user.UserAbstract;
-import app.wrapped.*;
+import app.wrapped.Wrapped;
+import app.wrapped.Monetization;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import fileio.input.CommandInput;
@@ -915,7 +915,8 @@ public final class CommandRunner {
 
         user.updateRecommendations(commandInput);
 
-        String message = "The recommendations for user " + commandInput.getUsername() + " have been updated successfully.";
+        String message = "The recommendations for user " + commandInput.getUsername()
+                + " have been updated successfully.";
 
         ObjectNode objectNode = objectMapper.createObjectNode();
         objectNode.put("command", commandInput.getCommand());
@@ -969,7 +970,8 @@ public final class CommandRunner {
         objectNode.put("user", commandInput.getUsername());
         objectNode.put("timestamp", commandInput.getTimestamp());
         if (user == null) {
-            objectNode.put("message", objectMapper.valueToTree("The username " + commandInput.getUsername() + " doesn't exist."));
+            objectNode.put("message", objectMapper.valueToTree(
+                    "The username " + commandInput.getUsername() + " doesn't exist."));
         } else {
             objectNode.put("result", objectMapper.valueToTree(user.getBoughtMerch()));
         }

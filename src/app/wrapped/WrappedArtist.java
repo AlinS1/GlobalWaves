@@ -19,7 +19,8 @@ public class WrappedArtist implements Wrapped {
     private TreeMap<String, Integer> allAlbums = new TreeMap<>();
     @JsonIgnore
     private TreeMap<String, Integer> allSongs = new TreeMap<>();
-    @JsonIgnore @Getter
+    @JsonIgnore
+    @Getter
     private TreeMap<String, Integer> allFans = new TreeMap<>();
 
     @Getter
@@ -31,8 +32,7 @@ public class WrappedArtist implements Wrapped {
     @Getter
     private int listeners;
 
-
-    public WrappedArtist(String userType) {
+    public WrappedArtist(final String userType) {
         this.userType = userType;
     }
 
@@ -41,7 +41,7 @@ public class WrappedArtist implements Wrapped {
         return userType;
     }
 
-    public void addListenAlbum(String album) {
+    public void addListenAlbum(final String album) {
         if (allAlbums.containsKey(album)) {
             allAlbums.put(album, allAlbums.get(album) + 1);
         } else {
@@ -49,7 +49,7 @@ public class WrappedArtist implements Wrapped {
         }
     }
 
-    public void addListenSong(String song) {
+    public void addListenSong(final String song) {
         if (allSongs.containsKey(song)) {
             allSongs.put(song, allSongs.get(song) + 1);
         } else {
@@ -57,7 +57,7 @@ public class WrappedArtist implements Wrapped {
         }
     }
 
-    public void addListenFan(String fan) {
+    public void addListenFan(final String fan) {
         if (allFans.containsKey(fan)) {
             allFans.put(fan, allFans.get(fan) + 1);
         } else {
@@ -70,13 +70,14 @@ public class WrappedArtist implements Wrapped {
 
         ArrayList<Map.Entry<String, Integer>> entryList = new ArrayList<>(allAlbums.entrySet());
 
-        Collections.sort(entryList, (entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue()));
+        Collections.sort(entryList,
+                (entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue()));
 
         int kon = 0;
         for (Map.Entry<String, Integer> entry : entryList) {
             topAlbums.put(entry.getKey(), entry.getValue());
             kon++;
-            if (kon == 5) {
+            if (kon == limit) {
                 break;
             }
         }
@@ -87,29 +88,32 @@ public class WrappedArtist implements Wrapped {
 
         ArrayList<Map.Entry<String, Integer>> entryList = new ArrayList<>(allSongs.entrySet());
 
-        Collections.sort(entryList, (entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue()));
+        Collections.sort(entryList,
+                (entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue()));
 
         int kon = 0;
         for (Map.Entry<String, Integer> entry : entryList) {
             topSongs.put(entry.getKey(), entry.getValue());
             kon++;
-            if (kon == 5) {
+            if (kon == limit) {
                 break;
             }
-        }    }
+        }
+    }
 
     public void setTop5Fans() {
         topFans = new ArrayList<>();
 
         ArrayList<Map.Entry<String, Integer>> entryList = new ArrayList<>(allFans.entrySet());
 
-        Collections.sort(entryList, (entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue()));
+        Collections.sort(entryList,
+                (entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue()));
 
         int kon = 0;
         for (Map.Entry<String, Integer> entry : entryList) {
             topFans.add(entry.getKey());
             kon++;
-            if (kon == 5) {
+            if (kon == limit) {
                 break;
             }
         }
@@ -120,14 +124,15 @@ public class WrappedArtist implements Wrapped {
     }
 
     public boolean verifyWrapped() {
-        if (allAlbums.entrySet().isEmpty() && allSongs.entrySet().isEmpty() && allFans.entrySet().isEmpty()) {
+        if (allAlbums.entrySet().isEmpty() && allSongs.entrySet().isEmpty()
+                && allFans.entrySet().isEmpty()) {
             return false;
         }
         return true;
     }
 
     @Override
-    public void updateWrapped(PlayerSource source, User user) {
+    public void updateWrapped(final PlayerSource source, final User user) {
         AudioFile audioFile = (AudioFile) source.getAudioFile();
         addListenSong(audioFile.getName());
         addListenAlbum(((Song) audioFile).getAlbum());

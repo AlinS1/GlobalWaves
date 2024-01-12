@@ -32,16 +32,16 @@ public final class ArtistPage implements Page {
     public String printCurrentPage() {
         return "Albums:\n\t%s\n\nMerch:\n\t%s\n\nEvents:\n\t%s"
                 .formatted(albums.stream().map(Album::getName).toList(),
-                           merch.stream().map(merchItem -> "%s - %d:\n\t%s"
-                                .formatted(merchItem.getName(),
-                                           merchItem.getPrice(),
-                                           merchItem.getDescription()))
+                        merch.stream().map(merchItem -> "%s - %d:\n\t%s"
+                                        .formatted(merchItem.getName(),
+                                                merchItem.getPrice(),
+                                                merchItem.getDescription()))
                                 .toList(),
-                           events.stream().map(event -> "%s - %s:\n\t%s"
-                                 .formatted(event.getName(),
-                                            event.getDate(),
-                                            event.getDescription()))
-                                 .toList());
+                        events.stream().map(event -> "%s - %s:\n\t%s"
+                                        .formatted(event.getName(),
+                                                event.getDate(),
+                                                event.getDescription()))
+                                .toList());
     }
 
     @Override
@@ -49,9 +49,9 @@ public final class ArtistPage implements Page {
         return "artistPage";
     }
 
-    public Merchandise getMerchandise(String name) {
-        for(Merchandise merchItem : merch) {
-            if(merchItem.getName().equals(name)) {
+    public Merchandise getMerchandise(final String name) {
+        for (Merchandise merchItem : merch) {
+            if (merchItem.getName().equals(name)) {
                 return merchItem;
             }
         }

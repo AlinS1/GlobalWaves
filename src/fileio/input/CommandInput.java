@@ -28,6 +28,7 @@ public final class CommandInput {
 
     public CommandInput() {
     }
+
     public String getType() {
         return type;
     }
@@ -192,7 +193,7 @@ public final class CommandInput {
         return recommendationType;
     }
 
-    public void setRecommendationType(String recommendationType) {
+    public void setRecommendationType(final String recommendationType) {
         this.recommendationType = recommendationType;
     }
 

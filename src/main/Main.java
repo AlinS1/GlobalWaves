@@ -147,13 +147,15 @@ public final class Main {
                 case "showPodcasts" -> outputs.add(CommandRunner.showPodcasts(command));
                 case "wrapped" -> outputs.add(CommandRunner.wrapped(command));
                 case "subscribe" -> outputs.add(CommandRunner.subscribe(command));
-                case "getNotifications" ->  outputs.add(CommandRunner.getNotifications(command));
+                case "getNotifications" -> outputs.add(CommandRunner.getNotifications(command));
 
                 case "previousPage" -> outputs.add(CommandRunner.previousPage(command));
                 case "nextPage" -> outputs.add(CommandRunner.nextPage(command));
 
-                case "updateRecommendations" -> outputs.add(CommandRunner.updateRecommendations(command));
-                case "loadRecommendations" -> outputs.add(CommandRunner.loadRecommendations(command));
+                case "updateRecommendations" ->
+                        outputs.add(CommandRunner.updateRecommendations(command));
+                case "loadRecommendations" ->
+                        outputs.add(CommandRunner.loadRecommendations(command));
 
                 case "buyMerch" -> outputs.add(CommandRunner.buyMerch(command));
                 case "seeMerch" -> outputs.add(CommandRunner.seeMerch(command));

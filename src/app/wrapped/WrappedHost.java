@@ -34,7 +34,7 @@ public class WrappedHost implements Wrapped {
         return userType;
     }
 
-    public void addListenEpisode(String episode) {
+    public void addListenEpisode(final String episode) {
         if (allEpisodes.containsKey(episode)) {
             allEpisodes.put(episode, allEpisodes.get(episode) + 1);
         } else {
@@ -42,7 +42,7 @@ public class WrappedHost implements Wrapped {
         }
     }
 
-    public void addListenFan(String fan) {
+    public void addListenFan(final String fan) {
         if (allFans.containsKey(fan)) {
             allFans.put(fan, allFans.get(fan) + 1);
         } else {
@@ -55,13 +55,14 @@ public class WrappedHost implements Wrapped {
 
         ArrayList<Map.Entry<String, Integer>> entryList = new ArrayList<>(allEpisodes.entrySet());
 
-        Collections.sort(entryList, (entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue()));
+        Collections.sort(entryList,
+                (entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue()));
 
         int kon = 0;
         for (Map.Entry<String, Integer> entry : entryList) {
             topEpisodes.put(entry.getKey(), entry.getValue());
             kon++;
-            if (kon == 5) {
+            if (kon == limit) {
                 break;
             }
         }
@@ -79,7 +80,7 @@ public class WrappedHost implements Wrapped {
     }
 
     @Override
-    public void updateWrapped(PlayerSource source, User user) {
+    public void updateWrapped(final PlayerSource source, final User user) {
         addListenEpisode(source.getAudioFile().getName());
         addListenFan(user.getUsername());
     }

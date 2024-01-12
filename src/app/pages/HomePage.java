@@ -19,9 +19,14 @@ public final class HomePage implements Page {
     private List<Song> songRecommendations = new ArrayList<>();
     @Getter
     private List<Playlist> playlistRecommendations = new ArrayList<>();
+    @Getter
     private final int limit = 5;
     @Getter
-    private String lastRecommendation ="none";
+    private final int limitGenre = 3;
+    @Getter
+    private final int limitDuration = 30;
+    @Getter
+    private String lastRecommendation = "none";
 
     /**
      * Instantiates a new Home page.
@@ -35,17 +40,21 @@ public final class HomePage implements Page {
 
     @Override
     public String printCurrentPage() {
-        return "Liked songs:\n\t%s\n\nFollowed playlists:\n\t%s\n\nSong recommendations:\n\t%s\n\nPlaylists recommendations:\n\t%s"
+        return ("Liked songs:\n\t%s\n\nFollowed playlists:\n\t%s\n\nSong recommendations:"
+                + "\n\t%s\n\nPlaylists recommendations:\n\t%s")
                 .formatted(likedSongs.stream()
-                                .sorted(Comparator.comparing(Song::getLikes)
-                                        .reversed()).limit(limit).map(Song::getName)
-                                .toList(),
+                                     .sorted(Comparator.comparing(Song::getLikes)
+                                                       .reversed()).limit(limit).map(Song::getName)
+                                     .toList(),
                         followedPlaylists.stream().sorted((o1, o2) ->
-                                        o2.getSongs().stream().map(Song::getLikes)
-                                                .reduce(Integer::sum).orElse(0)
-                                                - o1.getSongs().stream().map(Song::getLikes).reduce(Integer::sum)
-                                                .orElse(0)).limit(limit).map(Playlist::getName)
-                                .toList(), songRecommendations.stream().map(Song::getName).toList(), playlistRecommendations.stream().map(Playlist::getName).toList());
+                                                 o2.getSongs().stream().map(Song::getLikes)
+                                                   .reduce(Integer::sum).orElse(0)
+                                                         - o1.getSongs().stream().map(Song::getLikes)
+                                                             .reduce(Integer::sum)
+                                                             .orElse(0)).limit(limit).map(Playlist::getName)
+                                         .toList(),
+                        songRecommendations.stream().map(Song::getName).toList(),
+                        playlistRecommendations.stream().map(Playlist::getName).toList());
     }
 
     @Override
@@ -53,12 +62,13 @@ public final class HomePage implements Page {
         return "homePage";
     }
 
-    public void updateSongRecommendation(Song song) {
+    public void updateSongRecommendation(final Song song) {
         songRecommendations.add(song);
         lastRecommendation = "random_song";
     }
 
-    public void updatePlaylistRecommendation(Playlist playlist, String recommendationType) {
+    public void updatePlaylistRecommendation(final Playlist playlist,
+                                             final String recommendationType) {
         this.lastRecommendation = recommendationType;
         playlistRecommendations.add(playlist);
     }
