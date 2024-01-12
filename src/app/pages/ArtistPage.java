@@ -4,6 +4,7 @@ import app.audio.Collections.Album;
 import app.user.Artist;
 import app.user.Event;
 import app.user.Merchandise;
+import lombok.Getter;
 
 import java.util.List;
 
@@ -12,6 +13,7 @@ import java.util.List;
  */
 public final class ArtistPage implements Page {
     private List<Album> albums;
+    @Getter
     private List<Merchandise> merch;
     private List<Event> events;
 
@@ -45,5 +47,14 @@ public final class ArtistPage implements Page {
     @Override
     public String getPageType() {
         return "artistPage";
+    }
+
+    public Merchandise getMerchandise(String name) {
+        for(Merchandise merchItem : merch) {
+            if(merchItem.getName().equals(name)) {
+                return merchItem;
+            }
+        }
+        return null;
     }
 }

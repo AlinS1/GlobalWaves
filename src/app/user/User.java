@@ -8,6 +8,7 @@ import app.audio.Collections.Podcast;
 import app.audio.Files.AudioFile;
 import app.audio.Files.Song;
 import app.audio.LibraryEntry;
+import app.pages.ArtistPage;
 import app.pages.HomePage;
 import app.pages.LikedContentPage;
 import app.pages.Page;
@@ -60,6 +61,8 @@ public final class User extends UserAbstract {
     ArrayList<Notification> notifications = new ArrayList<Notification>();
     @Getter
     PageHistory pageHistory = new PageHistory();
+    @Getter
+    List<String> boughtMerch = new ArrayList<String>();
 
 
     /**
@@ -779,5 +782,26 @@ public final class User extends UserAbstract {
 
         return "Playback loaded successfully.";
     }
+
+    public String buyMerch(String merchName) {
+        if (!currentPage.getPageType().equals("artistPage")) {
+            return "Cannot buy merch from this page.";
+        }
+        ArtistPage page = (ArtistPage) currentPage;
+        Merchandise merch = page.getMerchandise(merchName);
+        if (merch == null) {
+            return "The merch " + merchName + " doesn't exist.";
+        }
+        boughtMerch.add(merch.getName());
+
+        for(Artist artist : Admin.getInstance().getArtists()){
+            if(artist.getPage() == currentPage){
+                artist.buyMerch(merch);
+                return getUsername() + " has added new merch successfully.";
+            }
+        }
+        return "not found";
+    }
+
 
 }

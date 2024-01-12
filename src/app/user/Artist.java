@@ -135,4 +135,8 @@ public final class Artist extends ContentCreator {
     public double getTotalRevenueOfArtist(){
         return monetization.getSongRevenue() + monetization.getMerchRevenue();
     }
+
+    public void buyMerch(Merchandise merch){
+        monetization.addMerchRevenue(merch.getPrice());
+    }
 }

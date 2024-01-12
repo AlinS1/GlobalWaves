@@ -911,7 +911,7 @@ public final class Admin {
         Iterator<Artist> iterator = artists.iterator();
         while (iterator.hasNext()) {
             Artist artist = iterator.next();
-            if (((WrappedArtist) artist.getWrapped()).getAllFans().isEmpty()) {
+            if (((WrappedArtist) artist.getWrapped()).getAllFans().isEmpty() && artist.getMonetization().getMerchRevenue() == 0) {
                 iterator.remove();
             }
         }

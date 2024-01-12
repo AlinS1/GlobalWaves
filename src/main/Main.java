@@ -155,6 +155,9 @@ public final class Main {
                 case "updateRecommendations" -> outputs.add(CommandRunner.updateRecommendations(command));
                 case "loadRecommendations" -> outputs.add(CommandRunner.loadRecommendations(command));
 
+                case "buyMerch" -> outputs.add(CommandRunner.buyMerch(command));
+                case "seeMerch" -> outputs.add(CommandRunner.seeMerch(command));
+
                 default -> System.out.println("Invalid command " + commandName);
             }
         }
