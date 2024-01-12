@@ -37,4 +37,12 @@ public class PageHistory {
         currentPos++;
         return pages.get(currentPos);
     }
+
+    public void printHistory(){
+        System.out.println("============== Current pos" + currentPos);
+        for (int i = 0; i < pages.size(); i++) {
+            System.out.println(pages.get(i).getPageType());
+        }
+        System.out.println("==============");
+    }
 }

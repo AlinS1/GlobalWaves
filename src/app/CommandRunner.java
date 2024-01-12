@@ -699,6 +699,7 @@ public final class CommandRunner {
         objectNode.put("timestamp", commandInput.getTimestamp());
         objectNode.put("message", message);
 
+
         return objectNode;
     }
 
@@ -842,14 +843,14 @@ public final class CommandRunner {
 
         User user = Admin.getInstance().getUser(commandInput.getUsername());
         String message = null;
-        if(user == null) {
+        if (user == null) {
             message = "The username " + commandInput.getUsername() + " doesn't exist.";
         } else {
-            if(user.getCurrentPage() == null){
+            if (user.getCurrentPage() == null) {
                 message = "To subscribe you need to be on the page of an artist or host.";
             } else {
                 String pageType = user.getCurrentPage().getPageType();
-                if(pageType.equals("homePage") || pageType.equals("likedContentPage")){
+                if (pageType.equals("homePage") || pageType.equals("likedContentPage")) {
                     message = "To subscribe you need to be on the page of an artist or host.";
                 } else {
                     message = user.subscribe();
@@ -904,6 +905,38 @@ public final class CommandRunner {
         objectNode.put("timestamp", commandInput.getTimestamp());
         objectNode.put("message", objectMapper.valueToTree(user.nextPage()));
 
+
+        return objectNode;
+    }
+
+    public static ObjectNode updateRecommendations(final CommandInput commandInput) {
+
+        User user = Admin.getInstance().getUser(commandInput.getUsername());
+
+        user.updateRecommendations(commandInput);
+
+        String message = "The recommendations for user " + commandInput.getUsername() +" have been updated successfully.";
+
+        ObjectNode objectNode = objectMapper.createObjectNode();
+        objectNode.put("command", commandInput.getCommand());
+        objectNode.put("user", commandInput.getUsername());
+        objectNode.put("timestamp", commandInput.getTimestamp());
+        objectNode.put("message", objectMapper.valueToTree(message));
+
+
+        return objectNode;
+    }
+
+    public static ObjectNode loadRecommendations(final CommandInput commandInput) {
+
+        User user = admin.getUser(commandInput.getUsername());
+        String message = user.loadRecommendation();
+
+        ObjectNode objectNode = objectMapper.createObjectNode();
+        objectNode.put("command", "load");
+        objectNode.put("user", commandInput.getUsername());
+        objectNode.put("timestamp", commandInput.getTimestamp());
+        objectNode.put("message", message);
 
         return objectNode;
     }

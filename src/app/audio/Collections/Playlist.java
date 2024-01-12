@@ -4,13 +4,14 @@ import app.audio.Files.AudioFile;
 import app.audio.Files.Song;
 import app.utils.Enums;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.util.ArrayList;
 
 /**
  * The type Playlist.
  */
-@Getter
+@Getter @ToString
 public final class Playlist extends AudioCollection {
     private final ArrayList<Song> songs;
     private Enums.Visibility visibility;

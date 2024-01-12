@@ -108,8 +108,8 @@ public final class Admin {
             List<Episode> episodes = new ArrayList<>();
             for (EpisodeInput episodeInput : podcastInput.getEpisodes()) {
                 episodes.add(new Episode(episodeInput.getName(),
-                                         episodeInput.getDuration(),
-                                         episodeInput.getDescription()));
+                        episodeInput.getDuration(),
+                        episodeInput.getDescription()));
             }
             podcasts.add(new Podcast(podcastInput.getName(), podcastInput.getOwner(), episodes));
         }
@@ -140,8 +140,8 @@ public final class Admin {
      */
     public List<Playlist> getPlaylists() {
         return users.stream()
-                    .flatMap(user -> user.getPlaylists().stream())
-                    .collect(Collectors.toList());
+                .flatMap(user -> user.getPlaylists().stream())
+                .collect(Collectors.toList());
     }
 
     /**
@@ -151,8 +151,8 @@ public final class Admin {
      */
     public List<Album> getAlbums() {
         return artists.stream()
-                      .flatMap(artist -> artist.getAlbums().stream())
-                      .collect(Collectors.toList());
+                .flatMap(artist -> artist.getAlbums().stream())
+                .collect(Collectors.toList());
     }
 
     /**
@@ -178,9 +178,9 @@ public final class Admin {
      */
     public User getUser(final String username) {
         return users.stream()
-                    .filter(user -> user.getUsername().equals(username))
-                    .findFirst()
-                    .orElse(null);
+                .filter(user -> user.getUsername().equals(username))
+                .findFirst()
+                .orElse(null);
     }
 
     /**
@@ -235,9 +235,9 @@ public final class Admin {
         allUsers.addAll(hosts);
 
         return allUsers.stream()
-                       .filter(userPlatform -> userPlatform.getUsername().equals(username))
-                       .findFirst()
-                       .orElse(null);
+                .filter(userPlatform -> userPlatform.getUsername().equals(username))
+                .findFirst()
+                .orElse(null);
     }
 
     /**
@@ -305,8 +305,8 @@ public final class Admin {
         user.getFollowedPlaylists().forEach(Playlist::decreaseFollowers);
 
         users.stream().filter(otherUser -> otherUser != user)
-             .forEach(otherUser -> otherUser.getFollowedPlaylists()
-                                            .removeAll(user.getPlaylists()));
+                .forEach(otherUser -> otherUser.getFollowedPlaylists()
+                        .removeAll(user.getPlaylists()));
 
         users.remove(user);
         return "%s was successfully deleted.".formatted(user.getUsername());
@@ -327,9 +327,9 @@ public final class Admin {
 
     private String deleteArtist(final Artist artist) {
         if (artist.getAlbums().stream().anyMatch(album -> album.getSongs().stream()
-            .anyMatch(song -> getAudioFilesStream().anyMatch(audioFile -> audioFile == song))
-            || getAudioCollectionsStream().anyMatch(collection -> collection == album))
-            || users.stream().anyMatch(user -> user.getCurrentPage() == artist.getPage())) {
+                .anyMatch(song -> getAudioFilesStream().anyMatch(audioFile -> audioFile == song))
+                || getAudioCollectionsStream().anyMatch(collection -> collection == album))
+                || users.stream().anyMatch(user -> user.getCurrentPage() == artist.getPage())) {
             return "%s can't be deleted.".formatted(artist.getUsername());
         }
 
@@ -362,35 +362,35 @@ public final class Admin {
 
         Artist currentArtist = (Artist) currentUser;
         if (currentArtist.getAlbums().stream()
-            .anyMatch(album -> album.getName().equals(albumName))) {
+                .anyMatch(album -> album.getName().equals(albumName))) {
             return "%s has another album with the same name.".formatted(username);
         }
 
         List<Song> newSongs = commandInput.getSongs().stream()
-                                       .map(songInput -> new Song(songInput.getName(),
-                                                                  songInput.getDuration(),
-                                                                  albumName,
-                                                                  songInput.getTags(),
-                                                                  songInput.getLyrics(),
-                                                                  songInput.getGenre(),
-                                                                  songInput.getReleaseYear(),
-                                                                  currentArtist.getUsername()))
-                                       .toList();
+                .map(songInput -> new Song(songInput.getName(),
+                        songInput.getDuration(),
+                        albumName,
+                        songInput.getTags(),
+                        songInput.getLyrics(),
+                        songInput.getGenre(),
+                        songInput.getReleaseYear(),
+                        currentArtist.getUsername()))
+                .toList();
 
         Set<String> songNames = new HashSet<>();
         if (!newSongs.stream().filter(song -> !songNames.add(song.getName()))
-                  .collect(Collectors.toSet()).isEmpty()) {
+                .collect(Collectors.toSet()).isEmpty()) {
             return "%s has the same song at least twice in this album.".formatted(username);
         }
 
         songs.addAll(newSongs);
         currentArtist.getAlbums().add(new Album(albumName,
-                                                commandInput.getDescription(),
-                                                username,
-                                                newSongs,
-                                                commandInput.getReleaseYear()));
+                commandInput.getDescription(),
+                username,
+                newSongs,
+                commandInput.getReleaseYear()));
 
-        for(User subscriber : currentArtist.getSubscribers()) {
+        for (User subscriber : currentArtist.getSubscribers()) {
             subscriber.addNotification("New Album", "New Album from " + currentArtist.getUsername() + ".");
         }
 
@@ -427,12 +427,12 @@ public final class Admin {
 
         for (Song song : searchedAlbum.getSongs()) {
             if (getAudioCollectionsStream().anyMatch(collection -> collection.containsTrack(song))
-                || getAudioFilesStream().anyMatch(audioFile -> audioFile == song)) {
+                    || getAudioFilesStream().anyMatch(audioFile -> audioFile == song)) {
                 return "%s can't delete this album.".formatted(username);
             }
         }
 
-        for (Song song: searchedAlbum.getSongs()) {
+        for (Song song : searchedAlbum.getSongs()) {
             users.forEach(user -> {
                 user.getLikedSongs().remove(song);
                 user.getPlaylists().forEach(playlist -> playlist.removeSong(song));
@@ -463,20 +463,20 @@ public final class Admin {
 
         Host currentHost = (Host) currentUser;
         if (currentHost.getPodcasts().stream()
-            .anyMatch(podcast -> podcast.getName().equals(podcastName))) {
+                .anyMatch(podcast -> podcast.getName().equals(podcastName))) {
             return "%s has another podcast with the same name.".formatted(username);
         }
 
         List<Episode> episodes = commandInput.getEpisodes().stream()
-                                             .map(episodeInput ->
-                                                     new Episode(episodeInput.getName(),
-                                                                 episodeInput.getDuration(),
-                                                                 episodeInput.getDescription()))
-                                             .collect(Collectors.toList());
+                .map(episodeInput ->
+                        new Episode(episodeInput.getName(),
+                                episodeInput.getDuration(),
+                                episodeInput.getDescription()))
+                .collect(Collectors.toList());
 
         Set<String> episodeNames = new HashSet<>();
         if (!episodes.stream().filter(episode -> !episodeNames.add(episode.getName()))
-                     .collect(Collectors.toSet()).isEmpty()) {
+                .collect(Collectors.toSet()).isEmpty()) {
             return "%s has the same episode in this podcast.".formatted(username);
         }
 
@@ -484,7 +484,7 @@ public final class Admin {
         currentHost.getPodcasts().add(newPodcast);
         podcasts.add(newPodcast);
 
-        for(User subscriber : currentHost.getSubscribers()) {
+        for (User subscriber : currentHost.getSubscribers()) {
             subscriber.addNotification("New Podcast", "New Podcast from " + currentHost.getUsername() + ".");
         }
 
@@ -555,11 +555,11 @@ public final class Admin {
         }
 
         currentArtist.getEvents().add(new Event(eventName,
-                                                commandInput.getDescription(),
-                                                commandInput.getDate()));
+                commandInput.getDescription(),
+                commandInput.getDate()));
 
-        for(User subscriber : currentArtist.getSubscribers()) {
-            subscriber.addNotification("New Event", "New Event from " + currentArtist.getUsername() +".");
+        for (User subscriber : currentArtist.getSubscribers()) {
+            subscriber.addNotification("New Event", "New Event from " + currentArtist.getUsername() + ".");
         }
 
         return "%s has added new event successfully.".formatted(username);
@@ -609,10 +609,10 @@ public final class Admin {
         int year = Integer.parseInt(dateElements.get(2));
 
         if (day < dateDayLowerLimit
-            || (month == 2 && day > dateFebHigherLimit)
-            || day > dateDayHigherLimit
-            || month < dateMonthLowerLimit || month > dateMonthHigherLimit
-            || year < dateYearLowerLimit || year > dateYearHigherLimit) {
+                || (month == 2 && day > dateFebHigherLimit)
+                || day > dateDayHigherLimit
+                || month < dateMonthLowerLimit || month > dateMonthHigherLimit
+                || year < dateYearLowerLimit || year > dateYearHigherLimit) {
             return false;
         }
 
@@ -637,18 +637,18 @@ public final class Admin {
 
         Artist currentArtist = (Artist) currentUser;
         if (currentArtist.getMerch().stream()
-                         .anyMatch(merch -> merch.getName().equals(commandInput.getName()))) {
+                .anyMatch(merch -> merch.getName().equals(commandInput.getName()))) {
             return "%s has merchandise with the same name.".formatted(currentArtist.getUsername());
         } else if (commandInput.getPrice() < 0) {
             return "Price for merchandise can not be negative.";
         }
 
         currentArtist.getMerch().add(new Merchandise(commandInput.getName(),
-                                                     commandInput.getDescription(),
-                                                     commandInput.getPrice()));
+                commandInput.getDescription(),
+                commandInput.getPrice()));
 
-        for(User subscriber : currentArtist.getSubscribers()) {
-            subscriber.addNotification("New Merchandise", "New Merchandise from " + currentArtist.getUsername() +".");
+        for (User subscriber : currentArtist.getSubscribers()) {
+            subscriber.addNotification("New Merchandise", "New Merchandise from " + currentArtist.getUsername() + ".");
         }
 
         return "%s has added new merchandise successfully.".formatted(username);
@@ -680,9 +680,9 @@ public final class Admin {
         }
 
         currentHost.getAnnouncements().add(new Announcement(announcementName,
-                                                            announcementDescription));
+                announcementDescription));
 
-        for(User subscriber : currentHost.getSubscribers()) {
+        for (User subscriber : currentHost.getSubscribers()) {
             subscriber.addNotification("New Announcement", "New Announcement from " + currentHost.getUsername() + ".");
         }
 
@@ -743,14 +743,20 @@ public final class Admin {
         switch (nextPage) {
             case "Home" -> user.setCurrentPage(user.getHomePage());
             case "LikedContent" -> user.setCurrentPage(user.getLikedContentPage());
-            case "Artist" -> user.setCurrentPage(getArtist(((Song)user.getPlayer().getSource().getAudioFile()).getArtist()).getPage());
-            case "Host" -> user.setCurrentPage(getHost(((Podcast)(user.getPlayer().getSource().getAudioCollection())).getOwner()).getPage());
+            case "Artist" ->
+                    user.setCurrentPage(getArtist(((Song) user.getPlayer().getSource().getAudioFile()).getArtist()).getPage());
+            case "Host" ->
+                    user.setCurrentPage(getHost(((Podcast) (user.getPlayer().getSource().getAudioCollection())).getOwner()).getPage());
             default -> {
                 return "%s is trying to access a non-existent page.".formatted(username);
             }
         }
 
         user.getPageHistory().addPage(user.getCurrentPage());
+
+//        System.out.println("ChangePage");
+//        user.getPageHistory().printHistory();
+
         return "%s accessed %s successfully.".formatted(username, nextPage);
     }
 
@@ -810,12 +816,12 @@ public final class Admin {
 
     private Stream<AudioCollection> getAudioCollectionsStream() {
         return users.stream().map(User::getPlayer)
-                    .map(Player::getCurrentAudioCollection).filter(Objects::nonNull);
+                .map(Player::getCurrentAudioCollection).filter(Objects::nonNull);
     }
 
     private Stream<AudioFile> getAudioFilesStream() {
         return users.stream().map(User::getPlayer)
-                    .map(Player::getCurrentAudioFile).filter(Objects::nonNull);
+                .map(Player::getCurrentAudioFile).filter(Objects::nonNull);
     }
 
     /**
@@ -825,11 +831,11 @@ public final class Admin {
      */
     public List<String> getTop5AlbumList() {
         List<Album> albums = artists.stream().map(Artist::getAlbums)
-                                    .flatMap(List::stream).toList();
+                .flatMap(List::stream).toList();
 
         final Map<Album, Integer> albumLikes = new HashMap<>();
         albums.forEach(album -> albumLikes.put(album, album.getSongs().stream()
-                                          .map(Song::getLikes).reduce(0, Integer::sum)));
+                .map(Song::getLikes).reduce(0, Integer::sum)));
 
         return albums.stream().sorted((o1, o2) -> {
             if ((int) albumLikes.get(o1) == albumLikes.get(o2)) {
@@ -847,10 +853,10 @@ public final class Admin {
     public List<String> getTop5ArtistList() {
         final Map<Artist, Integer> artistLikes = new HashMap<>();
         artists.forEach(artist -> artistLikes.put(artist, artist.getAllSongs().stream()
-                                              .map(Song::getLikes).reduce(0, Integer::sum)));
+                .map(Song::getLikes).reduce(0, Integer::sum)));
 
         return artists.stream().sorted(Comparator.comparingInt(artistLikes::get).reversed())
-                               .limit(limit).map(Artist::getUsername).toList();
+                .limit(limit).map(Artist::getUsername).toList();
     }
 
     /**
@@ -899,8 +905,7 @@ public final class Admin {
     // =============== ETAPA 3 ===============
 
 
-
-    public ArrayList<Artist> rankArtistsByMonetization(){
+    public ArrayList<Artist> rankArtistsByMonetization() {
         ArrayList<Artist> artists = new ArrayList<>(this.artists);
 
         Iterator<Artist> iterator = artists.iterator();
@@ -918,6 +923,22 @@ public final class Admin {
             return (int) (artist2.getTotalRevenueOfArtist() - artist1.getTotalRevenueOfArtist());
         });
         return artists;
+    }
+
+    public List<Song> getSongsByGenre(String genre) {
+        List<Song> songs = new ArrayList<>(this.songs);
+        return songs.stream().filter(song -> song.getGenre().equals(genre)).toList();
+    }
+
+    public List<Song> createPlaylistByGenre(String genre, int numberOfSongs) {
+        ArrayList<Song> allSongs = new ArrayList<>(this.songs);
+        List<Song> newList = allSongs.stream().filter(song -> song.getGenre().equals(genre)).sorted(Comparator.comparingInt(Song::getLikes).reversed()).limit(numberOfSongs).collect(Collectors.toList());
+        if (allSongs.size() == 0)
+            return null;
+        else
+            return newList;
+
+
     }
 
 }

@@ -19,11 +19,15 @@ import app.searchBar.SearchBar;
 import app.utils.Enums;
 import app.wrapped.Notification;
 import app.wrapped.PageHistory;
+import app.wrapped.WrappedArtist;
+import fileio.input.CommandInput;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * The type User.
@@ -621,7 +625,7 @@ public final class User extends UserAbstract {
         }
         if (source.getType() == Enums.PlayerSourceType.PODCAST) {
             Podcast podcast = (Podcast) source.getAudioCollection();
-            System.out.println(podcast.getOwner());
+            //System.out.println(podcast.getOwner());
 
             Host host = Admin.getInstance().getHost(podcast.getOwner());
             if (host != null) {
@@ -633,7 +637,7 @@ public final class User extends UserAbstract {
     public String subscribe() {
 
         String message = this.getUsername();
-        if(searchBar.getLastContentCreatorSelected().addSubscriber(this)){
+        if (searchBar.getLastContentCreatorSelected().addSubscriber(this)) {
             message += " subscribed to " + searchBar.getLastContentCreatorSelected().getUsername();
         } else {
             message += " unsubscribed from " + searchBar.getLastContentCreatorSelected().getUsername();
@@ -643,25 +647,137 @@ public final class User extends UserAbstract {
         return message;
     }
 
-    public void addNotification(String name, String description){
+    public void addNotification(String name, String description) {
         Notification notification = new Notification(name, description);
         notifications.add(notification);
     }
 
-    public String previousPage(){
-        if(pageHistory.getPreviousPage() != null){
-            currentPage = pageHistory.getPreviousPage();
+    public String previousPage() {
+        Page previousPage = pageHistory.getPreviousPage();
+        if (previousPage != null) {
+            currentPage = previousPage;
+
+//            System.out.println("previousPage");
+//            getPageHistory().printHistory();
+
             return "The user " + getUsername() + " has navigated successfully to the previous page.";
         }
         return "There are no pages left to go back.";
     }
 
-    public String nextPage(){
-        if(pageHistory.getNextPage() != null){
-            currentPage = pageHistory.getNextPage();
+    public String nextPage() {
+        Page nextPage = pageHistory.getNextPage();
+        if (nextPage != null) {
+            currentPage = nextPage;
             return "The user " + getUsername() + " has navigated successfully to the next page.";
         }
         return "There are no pages left to go forward.";
+    }
+
+    public void updateRecommendations(CommandInput cmd) {
+        String recommendationType = cmd.getRecommendationType();
+        if (recommendationType.equals("random_song")) {
+            int listenedTime = player.getCurrentAudioFile().getDuration() - player.getSource().getDuration();
+            if (listenedTime < 30) {
+                homePage.updateSongRecommendation((Song) player.getCurrentAudioFile());
+            } else {
+                List<Song> songsbyGenre = Admin.getInstance().getSongsByGenre(((Song) (player.getCurrentAudioFile())).getGenre());
+                Random random = new Random(listenedTime);
+                int idx = random.nextInt(songsbyGenre.size());
+                homePage.updateSongRecommendation(songsbyGenre.get(idx));
+            }
+            return;
+        }
+        if (recommendationType.equals("random_playlist")) {
+            ArrayList<String> top3Genres = getTop3Genres();
+            Playlist playlistRandom = new Playlist(getUsername() + "'s recommendations", getUsername(), cmd.getTimestamp());
+
+            int kon = 5;
+            for (int i = 0; i < top3Genres.size(); i++) {
+                List<Song> list = Admin.getInstance().createPlaylistByGenre(top3Genres.get(i), kon);
+                kon -= 2;
+                if (list != null)
+                    playlistRandom.getSongs().addAll(list);
+            }
+
+            homePage.updatePlaylistRecommendation(playlistRandom, recommendationType);
+            //System.out.println(playlistRandom.getName() + playlistRandom);
+            return;
+        }
+        if (recommendationType.equals("fans_playlist")) {
+            String artistCurrent = ((Song) player.getCurrentAudioFile()).getArtist();
+            Artist artist = Admin.getInstance().getArtist(artistCurrent);
+            WrappedArtist wrappedArtist = (WrappedArtist) artist.getWrapped();
+            wrappedArtist.makeFinalWrapped();
+            ArrayList<String> top5Fans = wrappedArtist.getTopFans();
+
+            Playlist playlistFans = new Playlist(artistCurrent + " Fan Club recommendations", getUsername(), cmd.getTimestamp());
+            for (String fan : top5Fans) {
+                User user = Admin.getInstance().getUser(fan);
+                playlistFans.getSongs().addAll(user.getTop5LikedSongs());
+            }
+            homePage.updatePlaylistRecommendation(playlistFans, recommendationType);
+            //System.out.println(playlistFans.getName() + playlistFans);
+        }
+    }
+
+    public ArrayList<Song> getTop5LikedSongs() {
+        ArrayList<Song> songs = new ArrayList<>(this.likedSongs);
+        songs.sort(Comparator.comparingInt(Song::getLikes).reversed());
+        return songs.stream().limit(5).collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    public ArrayList<String> getTop3Genres() {
+        Map<String, List<Song>> collectLikedSongs = likedSongs.stream().collect(Collectors.groupingBy(Song::getGenre));
+        Map<String, List<Song>> collectFollowedPlaylists = followedPlaylists.stream().flatMap(playlist -> playlist.getSongs().stream()).collect(Collectors.groupingBy(Song::getGenre));
+        Map<String, List<Song>> collectCreatedPlaylists = playlists.stream().flatMap(playlist -> playlist.getSongs().stream()).collect(Collectors.groupingBy(Song::getGenre));
+
+        Map<String, List<Song>> collectAll = new HashMap<>(collectLikedSongs);
+        for (Map.Entry<String, List<Song>> entry : collectFollowedPlaylists.entrySet()) {
+            if (collectAll.containsKey(entry.getKey())) {
+                collectAll.get(entry.getKey()).addAll(entry.getValue());
+            } else {
+                collectAll.put(entry.getKey(), entry.getValue());
+            }
+        }
+        for (Map.Entry<String, List<Song>> entry : collectCreatedPlaylists.entrySet()) {
+            if (collectAll.containsKey(entry.getKey())) {
+                collectAll.get(entry.getKey()).addAll(entry.getValue());
+            } else {
+                collectAll.put(entry.getKey(), entry.getValue());
+            }
+        }
+
+        Stream<Map.Entry<String, List<Song>>> all = collectAll.entrySet().stream().sorted(Comparator.comparingInt(entry -> entry.getValue().size())).limit(3);
+        ArrayList<String> top3Genres = all.map(Map.Entry::getKey).collect(Collectors.toCollection(ArrayList::new));
+        return top3Genres;
+    }
+
+    public String loadRecommendation() {
+        if (!status) {
+            return "%s is offline.".formatted(getUsername());
+        }
+
+        if (homePage.getLastRecommendation().equals("none")) {
+            return "No recommendations available.";
+        }
+
+        String lastRecommendation = homePage.getLastRecommendation();
+        if (lastRecommendation.equals("random_song")) {
+            player.setSource(homePage.getSongRecommendations().get(0), "song");
+        } else if (lastRecommendation.equals("random_playlist")) {
+            player.setSource(homePage.getPlaylistRecommendations().get(0), "playlist");
+        } else if (lastRecommendation.equals("fan_playlist")) {
+            player.setSource(homePage.getPlaylistRecommendations().get(1), "playlist");
+        }
+
+        searchBar.clearSelection();
+
+        this.updateWrapped(player.getSource());
+
+        player.pause();
+
+        return "Playback loaded successfully.";
     }
 
 }
