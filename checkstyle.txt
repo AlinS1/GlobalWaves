@@ -1,7 +1,6 @@
 Starting audit...
 [ERROR] D:\Should_be_on_desktop\Facultate\An2_Sem1\POO\OOP-Part3\.\src\app\wrapped\WrappedArtist.java:43:5: Class 'WrappedArtist' looks like designed for extension (can be subclassed), but the method 'getUserType' does not have javadoc that explains how to do that safely. If class is not designed for extension consider making the class 'WrappedArtist' final or making the method 'getUserType' static/final/abstract/empty, or adding allowed annotation for the method. [DesignForExtension]
-[ERROR] D:\Should_be_on_desktop\Facultate\An2_Sem1\POO\OOP-Part3\.\src\app\wrapped\WrappedFactory.java:15:56: '{' is not preceded with whitespace. [WhitespaceAround]
 [ERROR] D:\Should_be_on_desktop\Facultate\An2_Sem1\POO\OOP-Part3\.\src\app\wrapped\WrappedHost.java:32:5: Class 'WrappedHost' looks like designed for extension (can be subclassed), but the method 'getUserType' does not have javadoc that explains how to do that safely. If class is not designed for extension consider making the class 'WrappedHost' final or making the method 'getUserType' static/final/abstract/empty, or adding allowed annotation for the method. [DesignForExtension]
 [ERROR] D:\Should_be_on_desktop\Facultate\An2_Sem1\POO\OOP-Part3\.\src\app\wrapped\WrappedUser.java:51:5: Class 'WrappedUser' looks like designed for extension (can be subclassed), but the method 'getUserType' does not have javadoc that explains how to do that safely. If class is not designed for extension consider making the class 'WrappedUser' final or making the method 'getUserType' static/final/abstract/empty, or adding allowed annotation for the method. [DesignForExtension]
 Audit done.
-Checkstyle ends with 4 errors.
+Checkstyle ends with 3 errors.
