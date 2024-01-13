@@ -11,7 +11,8 @@ import java.util.ArrayList;
 /**
  * The type Playlist.
  */
-@Getter @ToString
+@Getter
+@ToString
 public final class Playlist extends AudioCollection {
     private final ArrayList<Song> songs;
     private Enums.Visibility visibility;
@@ -117,9 +118,8 @@ public final class Playlist extends AudioCollection {
 
     @Override
     public boolean isVisibleToUser(final String user) {
-        return this.getVisibility() == Enums.Visibility.PUBLIC
-               || (this.getVisibility() == Enums.Visibility.PRIVATE
-                   && this.getOwner().equals(user));
+        return this.getVisibility() == Enums.Visibility.PUBLIC || (
+                this.getVisibility() == Enums.Visibility.PRIVATE && this.getOwner().equals(user));
     }
 
     @Override
@@ -141,12 +141,19 @@ public final class Playlist extends AudioCollection {
     public boolean containsTrack(final AudioFile track) {
         return songs.contains(track);
     }
-    public boolean verifyPlaylistContainsSameSongs(final Playlist playlistToCompare){
-        for(Song song : playlistToCompare.getSongs()){
-            if(!this.containsSong(song)){
+
+    /**
+     * Verify if a given playlist contains same songs as another playlist.
+     *
+     * @param playlistToCompare playlist to compare
+     * @return true if the playlists contain the same songs
+     */
+    public boolean verifyPlaylistContainsSameSongs(final Playlist playlistToCompare) {
+        for (Song song : playlistToCompare.getSongs()) {
+            if (!this.containsSong(song)) {
                 return false; // distinct playlists
             }
         }
-        return true;
+        return true; // same playlist
     }
 }

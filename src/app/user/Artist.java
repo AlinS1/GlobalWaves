@@ -130,12 +130,16 @@ public final class Artist extends ContentCreator {
         return "artist";
     }
 
-    // ====================== ETAPA 3 ====================== //
-
     public double getTotalRevenueOfArtist() {
         return monetization.getSongRevenue() + monetization.getMerchRevenue();
     }
 
+
+    /**
+     * Signals that a merch has been bought and adds the price to the artist's revenue.
+     *
+     * @param merchItem the merch item that has been bought
+     */
     public void buyMerch(final Merchandise merchItem) {
         monetization.addMerchRevenue(merchItem.getPrice());
     }

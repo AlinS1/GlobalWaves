@@ -60,10 +60,8 @@ public final class Player {
 
     private void bookmarkPodcast() {
         if (source != null && source.getAudioFile() != null) {
-            PodcastBookmark currentBookmark =
-                    new PodcastBookmark(source.getAudioCollection().getName(),
-                            source.getIndex(),
-                            source.getDuration());
+            PodcastBookmark currentBookmark = new PodcastBookmark(
+                    source.getAudioCollection().getName(), source.getIndex(), source.getDuration());
             bookmarks.removeIf(bookmark -> bookmark.getName().equals(currentBookmark.getName()));
             bookmarks.add(currentBookmark);
         }
@@ -77,8 +75,7 @@ public final class Player {
      * @param bookmarks the bookmarks
      * @return the player source
      */
-    public static PlayerSource createSource(final String type,
-                                            final LibraryEntry entry,
+    public static PlayerSource createSource(final String type, final LibraryEntry entry,
                                             final List<PodcastBookmark> bookmarks) {
         if ("song".equals(type)) {
             return new PlayerSource(Enums.PlayerSourceType.LIBRARY, (AudioFile) entry);
@@ -182,7 +179,9 @@ public final class Player {
     public void simulatePlayer(final int time, final User user) {
         int elapsedTime = time;
 
-        if(elapsedTime - adDurationRemaining > 0) {
+        // If the ad is still playing, we don't want to play the next song.
+        // We will firstly subtract the ad's time from the elapsed time.
+        if (elapsedTime - adDurationRemaining > 0) {
             elapsedTime -= adDurationRemaining;
             adDurationRemaining = 0;
         } else {
@@ -198,13 +197,15 @@ public final class Player {
                 elapsedTime = playAd(elapsedTime, user);
 
                 // If the ad is still playing, we don't want to play the next song.
-                if(adDurationRemaining > 0) {
+                // We will stop this function's execution, because there is no time left
+                // to pass.
+                if (adDurationRemaining > 0) {
                     return;
                 }
-                    next();
+
+                next();
 
                 if (paused) {
-                    // elapsedTime = playAd(elapsedTime, user);
                     break;
                 }
                 user.updateWrapped(source);
@@ -216,20 +217,28 @@ public final class Player {
         }
     }
 
-    public int playAd(int elapsedTime, User user) {
+    /**
+     * Play the ad.
+     *
+     * @param elapsedTime the elapsed time (the time left to play)
+     * @param user        the user that has the ad on his player
+     * @return the time left to play after the ad has played
+     */
+    public int playAd(final int elapsedTime, final User user) {
+        int timeLeft = elapsedTime;
         if (adBreakIncoming) {
-            elapsedTime -= ad.getDuration();
+            timeLeft -= ad.getDuration();
             user.getUserPlan().updateRevenueForArtistsBasic(adPrice);
             adBreakIncoming = false;
-            if (elapsedTime < 0) {
-                adDurationRemaining = -elapsedTime;
-                System.out.println("Ad_ramas");
+
+            // If there was not enough time, we will keep the remaining time in adDurationRemaining.
+            // The remaining ad duration will be played in the next time simulation.
+            if (timeLeft < 0) {
+                adDurationRemaining = -timeLeft;
                 return 0;
-            } else {
-                System.out.println("Ad");
             }
         }
-        return elapsedTime;
+        return timeLeft;
     }
 
 
@@ -338,11 +347,15 @@ public final class Player {
         return new PlayerStats(filename, duration, repeatMode, shuffle, paused);
     }
 
-// ETAPA 3
-
-    public void updateAdBreakIncoming(final int adPrice) {
+    /**
+     * Signal that after the current song, an Ad will be played.
+     *
+     * @param price the ad's price
+     */
+    public void updateAdBreakIncoming(final int price) {
         this.adBreakIncoming = true;
-        this.adPrice = adPrice;
+        this.adPrice = price;
+        // The ad is the first song from the library.
         this.ad = Admin.getInstance().getSongs().get(0);
     }
 }

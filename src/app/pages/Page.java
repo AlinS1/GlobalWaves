@@ -11,5 +11,10 @@ public interface Page {
      */
     String printCurrentPage();
 
+    /**
+     * Gets page type.
+     *
+     * @return the page type
+     */
     String getPageType();
 }

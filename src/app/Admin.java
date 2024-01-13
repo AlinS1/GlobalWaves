@@ -34,7 +34,6 @@ import java.util.stream.Stream;
 import java.util.stream.Collectors;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Iterator;
 
 /**
  * The type Admin.
@@ -116,8 +115,7 @@ public final class Admin {
         for (PodcastInput podcastInput : podcastInputList) {
             List<Episode> episodes = new ArrayList<>();
             for (EpisodeInput episodeInput : podcastInput.getEpisodes()) {
-                episodes.add(new Episode(episodeInput.getName(),
-                        episodeInput.getDuration(),
+                episodes.add(new Episode(episodeInput.getName(), episodeInput.getDuration(),
                         episodeInput.getDescription()));
             }
             podcasts.add(new Podcast(podcastInput.getName(), podcastInput.getOwner(), episodes));
@@ -148,8 +146,7 @@ public final class Admin {
      * @return the playlists
      */
     public List<Playlist> getPlaylists() {
-        return users.stream()
-                .flatMap(user -> user.getPlaylists().stream())
+        return users.stream().flatMap(user -> user.getPlaylists().stream())
                 .collect(Collectors.toList());
     }
 
@@ -159,8 +156,7 @@ public final class Admin {
      * @return the albums
      */
     public List<Album> getAlbums() {
-        return artists.stream()
-                .flatMap(artist -> artist.getAlbums().stream())
+        return artists.stream().flatMap(artist -> artist.getAlbums().stream())
                 .collect(Collectors.toList());
     }
 
@@ -186,9 +182,7 @@ public final class Admin {
      * @return the user
      */
     public User getUser(final String username) {
-        return users.stream()
-                .filter(user -> user.getUsername().equals(username))
-                .findFirst()
+        return users.stream().filter(user -> user.getUsername().equals(username)).findFirst()
                 .orElse(null);
     }
 
@@ -199,9 +193,7 @@ public final class Admin {
      * @return the artist
      */
     public Artist getArtist(final String username) {
-        return artists.stream()
-                .filter(artist -> artist.getUsername().equals(username))
-                .findFirst()
+        return artists.stream().filter(artist -> artist.getUsername().equals(username)).findFirst()
                 .orElse(null);
     }
 
@@ -212,9 +204,7 @@ public final class Admin {
      * @return the host
      */
     public Host getHost(final String username) {
-        return hosts.stream()
-                .filter(artist -> artist.getUsername().equals(username))
-                .findFirst()
+        return hosts.stream().filter(artist -> artist.getUsername().equals(username)).findFirst()
                 .orElse(null);
     }
 
@@ -243,10 +233,8 @@ public final class Admin {
         allUsers.addAll(artists);
         allUsers.addAll(hosts);
 
-        return allUsers.stream()
-                .filter(userPlatform -> userPlatform.getUsername().equals(username))
-                .findFirst()
-                .orElse(null);
+        return allUsers.stream().filter(userPlatform -> userPlatform.getUsername().equals(username))
+                .findFirst().orElse(null);
     }
 
     /**
@@ -303,28 +291,25 @@ public final class Admin {
 
     private String deleteNormalUser(final User user) {
         if (user.getPlaylists().stream().anyMatch(playlist -> users.stream().map(User::getPlayer)
-                .filter(player -> player != user.getPlayer())
-                .map(Player::getCurrentAudioCollection)
-                .filter(Objects::nonNull)
-                .anyMatch(collection -> collection == playlist))) {
+                .filter(player -> player != user.getPlayer()).map(Player::getCurrentAudioCollection)
+                .filter(Objects::nonNull).anyMatch(collection -> collection == playlist))) {
             return "%s can't be deleted.".formatted(user.getUsername());
         }
 
         user.getLikedSongs().forEach(Song::dislike);
         user.getFollowedPlaylists().forEach(Playlist::decreaseFollowers);
 
-        users.stream().filter(otherUser -> otherUser != user)
-                .forEach(otherUser -> otherUser.getFollowedPlaylists()
-                        .removeAll(user.getPlaylists()));
+        users.stream().filter(otherUser -> otherUser != user).forEach(
+                otherUser -> otherUser.getFollowedPlaylists().removeAll(user.getPlaylists()));
 
         users.remove(user);
         return "%s was successfully deleted.".formatted(user.getUsername());
     }
 
     private String deleteHost(final Host host) {
-        if (host.getPodcasts().stream().anyMatch(podcast -> getAudioCollectionsStream()
-                .anyMatch(collection -> collection == podcast))
-                || users.stream().anyMatch(user -> user.getCurrentPage() == host.getPage())) {
+        if (host.getPodcasts().stream().anyMatch(podcast -> getAudioCollectionsStream().anyMatch(
+                collection -> collection == podcast)) || users.stream()
+                .anyMatch(user -> user.getCurrentPage() == host.getPage())) {
             return "%s can't be deleted.".formatted(host.getUsername());
         }
 
@@ -376,15 +361,9 @@ public final class Admin {
         }
 
         List<Song> newSongs = commandInput.getSongs().stream()
-                .map(songInput -> new Song(songInput.getName(),
-                        songInput.getDuration(),
-                        albumName,
-                        songInput.getTags(),
-                        songInput.getLyrics(),
-                        songInput.getGenre(),
-                        songInput.getReleaseYear(),
-                        currentArtist.getUsername()))
-                .toList();
+                .map(songInput -> new Song(songInput.getName(), songInput.getDuration(), albumName,
+                        songInput.getTags(), songInput.getLyrics(), songInput.getGenre(),
+                        songInput.getReleaseYear(), currentArtist.getUsername())).toList();
 
         Set<String> songNames = new HashSet<>();
         if (!newSongs.stream().filter(song -> !songNames.add(song.getName()))
@@ -393,11 +372,9 @@ public final class Admin {
         }
 
         songs.addAll(newSongs);
-        currentArtist.getAlbums().add(new Album(albumName,
-                commandInput.getDescription(),
-                username,
-                newSongs,
-                commandInput.getReleaseYear()));
+        currentArtist.getAlbums()
+                .add(new Album(albumName, commandInput.getDescription(), username, newSongs,
+                        commandInput.getReleaseYear()));
 
         for (User subscriber : currentArtist.getSubscribers()) {
             subscriber.addNotification("New Album",
@@ -478,11 +455,8 @@ public final class Admin {
         }
 
         List<Episode> episodes = commandInput.getEpisodes().stream()
-                .map(episodeInput ->
-                        new Episode(episodeInput.getName(),
-                                episodeInput.getDuration(),
-                                episodeInput.getDescription()))
-                .collect(Collectors.toList());
+                .map(episodeInput -> new Episode(episodeInput.getName(), episodeInput.getDuration(),
+                        episodeInput.getDescription())).collect(Collectors.toList());
 
         Set<String> episodeNames = new HashSet<>();
         if (!episodes.stream().filter(episode -> !episodeNames.add(episode.getName()))
@@ -565,9 +539,8 @@ public final class Admin {
             return "Event for %s does not have a valid date.".formatted(username);
         }
 
-        currentArtist.getEvents().add(new Event(eventName,
-                commandInput.getDescription(),
-                commandInput.getDate()));
+        currentArtist.getEvents()
+                .add(new Event(eventName, commandInput.getDescription(), commandInput.getDate()));
 
         for (User subscriber : currentArtist.getSubscribers()) {
             subscriber.addNotification("New Event",
@@ -620,11 +593,10 @@ public final class Admin {
         int month = Integer.parseInt(dateElements.get(1));
         int year = Integer.parseInt(dateElements.get(2));
 
-        if (day < dateDayLowerLimit
-                || (month == 2 && day > dateFebHigherLimit)
-                || day > dateDayHigherLimit
-                || month < dateMonthLowerLimit || month > dateMonthHigherLimit
-                || year < dateYearLowerLimit || year > dateYearHigherLimit) {
+        if (day < dateDayLowerLimit || (month == 2 && day > dateFebHigherLimit)
+                || day > dateDayHigherLimit || month < dateMonthLowerLimit
+                || month > dateMonthHigherLimit || year < dateYearLowerLimit
+                || year > dateYearHigherLimit) {
             return false;
         }
 
@@ -655,9 +627,9 @@ public final class Admin {
             return "Price for merchandise can not be negative.";
         }
 
-        currentArtist.getMerch().add(new Merchandise(commandInput.getName(),
-                commandInput.getDescription(),
-                commandInput.getPrice()));
+        currentArtist.getMerch()
+                .add(new Merchandise(commandInput.getName(), commandInput.getDescription(),
+                        commandInput.getPrice()));
 
         for (User subscriber : currentArtist.getSubscribers()) {
             subscriber.addNotification("New Merchandise",
@@ -692,8 +664,8 @@ public final class Admin {
             return "%s has already added an announcement with this name.";
         }
 
-        currentHost.getAnnouncements().add(new Announcement(announcementName,
-                announcementDescription));
+        currentHost.getAnnouncements()
+                .add(new Announcement(announcementName, announcementDescription));
 
         for (User subscriber : currentHost.getSubscribers()) {
             subscriber.addNotification("New Announcement",
@@ -768,8 +740,8 @@ public final class Admin {
 
         user.getPageHistory().addPage(user.getCurrentPage());
 
-//        System.out.println("ChangePage");
-//        user.getPageHistory().printHistory();
+        //        System.out.println("ChangePage");
+        //        user.getPageHistory().printHistory();
 
         return "%s accessed %s successfully.".formatted(username, nextPage);
     }
@@ -829,13 +801,13 @@ public final class Admin {
     }
 
     private Stream<AudioCollection> getAudioCollectionsStream() {
-        return users.stream().map(User::getPlayer)
-                .map(Player::getCurrentAudioCollection).filter(Objects::nonNull);
+        return users.stream().map(User::getPlayer).map(Player::getCurrentAudioCollection)
+                .filter(Objects::nonNull);
     }
 
     private Stream<AudioFile> getAudioFilesStream() {
-        return users.stream().map(User::getPlayer)
-                .map(Player::getCurrentAudioFile).filter(Objects::nonNull);
+        return users.stream().map(User::getPlayer).map(Player::getCurrentAudioFile)
+                .filter(Objects::nonNull);
     }
 
     /**
@@ -844,12 +816,11 @@ public final class Admin {
      * @return the top 5 album list
      */
     public List<String> getTop5AlbumList() {
-        List<Album> albums = artists.stream().map(Artist::getAlbums)
-                .flatMap(List::stream).toList();
+        List<Album> albums = artists.stream().map(Artist::getAlbums).flatMap(List::stream).toList();
 
         final Map<Album, Integer> albumLikes = new HashMap<>();
-        albums.forEach(album -> albumLikes.put(album, album.getSongs().stream()
-                .map(Song::getLikes).reduce(0, Integer::sum)));
+        albums.forEach(album -> albumLikes.put(album,
+                album.getSongs().stream().map(Song::getLikes).reduce(0, Integer::sum)));
 
         return albums.stream().sorted((o1, o2) -> {
             if ((int) albumLikes.get(o1) == albumLikes.get(o2)) {
@@ -866,8 +837,8 @@ public final class Admin {
      */
     public List<String> getTop5ArtistList() {
         final Map<Artist, Integer> artistLikes = new HashMap<>();
-        artists.forEach(artist -> artistLikes.put(artist, artist.getAllSongs().stream()
-                .map(Song::getLikes).reduce(0, Integer::sum)));
+        artists.forEach(artist -> artistLikes.put(artist,
+                artist.getAllSongs().stream().map(Song::getLikes).reduce(0, Integer::sum)));
 
         return artists.stream().sorted(Comparator.comparingInt(artistLikes::get).reversed())
                 .limit(limit).map(Artist::getUsername).toList();
@@ -900,8 +871,7 @@ public final class Admin {
      */
     public List<String> getTop5Playlists() {
         List<Playlist> sortedPlaylists = new ArrayList<>(getPlaylists());
-        sortedPlaylists.sort(Comparator.comparingInt(Playlist::getFollowers)
-                .reversed()
+        sortedPlaylists.sort(Comparator.comparingInt(Playlist::getFollowers).reversed()
                 .thenComparing(Playlist::getTimestamp, Comparator.naturalOrder()));
         List<String> topPlaylists = new ArrayList<>();
         int count = 0;
@@ -915,48 +885,63 @@ public final class Admin {
         return topPlaylists;
     }
 
-
-    // =============== ETAPA 3 ===============
-
-
+    /**
+     * Sorts the artists by their total revenue
+     *
+     * @return an array of artists sorted by their revenue
+     * (artists that don't have any songs played or merch bought are NOT included).
+     */
     public ArrayList<Artist> rankArtistsByMonetization() {
-        ArrayList<Artist> artistsRanked = new ArrayList<>(this.artists);
+        // Make an array with the artists that have at least
+        // one song played or one merch bought by a user.
+        ArrayList<Artist> artistsRanked = artists.stream()
+                .filter(artist -> (!((WrappedArtist) artist.getWrapped()).getAllFans().isEmpty()
+                        || artist.getMonetization().getMerchRevenue() != 0))
+                .collect(Collectors.toCollection(ArrayList::new));
 
-        Iterator<Artist> iterator = artistsRanked.iterator();
-        while (iterator.hasNext()) {
-            Artist artist = iterator.next();
-            if (((WrappedArtist) artist.getWrapped()).getAllFans().isEmpty()
-                    && artist.getMonetization().getMerchRevenue() == 0) {
-                iterator.remove();
-            }
-        }
-
+        // Sort the artists by their total revenue.
         artistsRanked.sort((artist1, artist2) -> {
             if (artist1.getTotalRevenueOfArtist() == artist2.getTotalRevenueOfArtist()) {
                 return artist1.getUsername().compareTo(artist2.getUsername());
             }
             return (int) (artist2.getTotalRevenueOfArtist() - artist1.getTotalRevenueOfArtist());
         });
+
         return artistsRanked;
     }
 
+    /**
+     * Get all the songs that have the given genre
+     *
+     * @param genre the genre of the songs we want to get
+     * @return a list of songs that have the given genre
+     */
     public List<Song> getSongsByGenre(final String genre) {
         List<Song> filteredSongs = new ArrayList<>(this.songs);
         return filteredSongs.stream().filter(song -> song.getGenre().equals(genre)).toList();
     }
 
+    /**
+     * Creates a list of songs by genre, sorts them and limits the size of the list
+     *
+     * @param genre         the genre of the songs we want to put in the list
+     * @param numberOfSongs the maximum number of songs we want to put in the list
+     * @return a list of songs with the given genre and limited by the maximum number of songs
+     * that are sorted descendently by the songs' likes.
+     */
     public List<Song> createPlaylistByGenre(final String genre, final int numberOfSongs) {
         ArrayList<Song> allSongs = new ArrayList<>(this.songs);
+
+        // Remove the songs that don't have the given genre,
+        // sort them by their number of likes and limit the list's size by the given number.
         List<Song> newList = allSongs.stream().filter(song -> song.getGenre().equals(genre))
                 .sorted(Comparator.comparingInt(Song::getLikes).reversed()).limit(numberOfSongs)
                 .collect(Collectors.toList());
-        if (allSongs.size() == 0) {
+
+        if (allSongs.isEmpty()) {
             return null;
         } else {
             return newList;
         }
-
-
     }
-
 }

@@ -1,9 +1,6 @@
 package app.wrapped;
 
 import app.pages.Page;
-import lombok.val;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class PageHistory {
@@ -12,10 +9,17 @@ public class PageHistory {
 
     public PageHistory() {
         pages = new ArrayList<Page>();
-        currentPos = -1;
+        currentPos = -1; // start on -1 because the first page will be added at position 0
     }
 
-    public void addPage(Page page) {
+
+    /**
+     * Adds a page to the history.
+     *
+     * @param page the page to be added to the history
+     */
+    public void addPage(final Page page) {
+        // If the current position is not the last one, delete all the pages after the current one.
         if (currentPos < pages.size() - 1) {
             pages.subList(currentPos + 1, pages.size()).clear();
         }
@@ -23,28 +27,29 @@ public class PageHistory {
         currentPos++;
     }
 
-
+    /**
+     * Gets the previous page from the history.
+     *
+     * @return the previous page from the history
+     */
     public Page getPreviousPage() {
         if (currentPos <= 0) {
-            return null;
+            return null; // already reached the first page
         }
         currentPos--;
         return pages.get(currentPos);
     }
 
+    /**
+     * Gets the next page from the history.
+     *
+     * @return the next page from the history
+     */
     public Page getNextPage() {
         if (currentPos >= pages.size() - 1) {
-            return null;
+            return null; // already reached the last page
         }
         currentPos++;
         return pages.get(currentPos);
-    }
-
-    public void printHistory() {
-        System.out.println("============== Current pos" + currentPos);
-        for (int i = 0; i < pages.size(); i++) {
-            System.out.println(pages.get(i).getPageType());
-        }
-        System.out.println("==============");
     }
 }

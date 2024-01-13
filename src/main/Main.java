@@ -57,9 +57,9 @@ public final class Main {
             }
             kon++;
 
-//            if (kon > 7) {
-//                break;
-//            }
+            //            if (kon > 7) {
+            //                break;
+            //            }
 
             String filepath = CheckerConstants.OUT_PATH + file.getName();
             File out = new File(filepath);
@@ -77,15 +77,12 @@ public final class Main {
      * @param filePath2 for output file
      * @throws IOException in case of exceptions to reading / writing
      */
-    public static void action(final String filePath1,
-                              final String filePath2) throws IOException {
+    public static void action(final String filePath1, final String filePath2) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
-        LibraryInput library = objectMapper.readValue(new File(CheckerConstants.TESTS_PATH
-                        + "library/library.json"),
-                LibraryInput.class);
-        CommandInput[] commands = objectMapper.readValue(new File(CheckerConstants.TESTS_PATH
-                        + filePath1),
-                CommandInput[].class);
+        LibraryInput library = objectMapper.readValue(
+                new File(CheckerConstants.TESTS_PATH + "library/library.json"), LibraryInput.class);
+        CommandInput[] commands = objectMapper.readValue(
+                new File(CheckerConstants.TESTS_PATH + filePath1), CommandInput[].class);
         ArrayNode outputs = objectMapper.createArrayNode();
 
         Admin admin = Admin.getInstance();
@@ -113,8 +110,8 @@ public final class Main {
                 case "next" -> outputs.add(CommandRunner.next(command));
                 case "prev" -> outputs.add(CommandRunner.prev(command));
                 case "createPlaylist" -> outputs.add(CommandRunner.createPlaylist(command));
-                case "addRemoveInPlaylist" -> outputs.add(CommandRunner
-                        .addRemoveInPlaylist(command));
+                case "addRemoveInPlaylist" ->
+                        outputs.add(CommandRunner.addRemoveInPlaylist(command));
                 case "switchVisibility" -> outputs.add(CommandRunner.switchVisibility(command));
                 case "showPlaylists" -> outputs.add(CommandRunner.showPlaylists(command));
                 case "follow" -> outputs.add(CommandRunner.follow(command));
@@ -123,15 +120,14 @@ public final class Main {
                 case "getPreferredGenre" -> outputs.add(CommandRunner.getPreferredGenre(command));
                 case "getTop5Songs" -> outputs.add(CommandRunner.getTop5Songs(command));
                 case "getTop5Playlists" -> outputs.add(CommandRunner.getTop5Playlists(command));
-                case "switchConnectionStatus" -> outputs.add(CommandRunner
-                        .switchConnectionStatus(command));
+                case "switchConnectionStatus" ->
+                        outputs.add(CommandRunner.switchConnectionStatus(command));
                 case "addUser" -> outputs.add(CommandRunner.addUser(command));
                 case "deleteUser" -> outputs.add(CommandRunner.deleteUser(command));
                 case "addPodcast" -> outputs.add(CommandRunner.addPodcast(command));
                 case "removePodcast" -> outputs.add(CommandRunner.removePodcast(command));
                 case "addAnnouncement" -> outputs.add(CommandRunner.addAnnouncement(command));
-                case "removeAnnouncement" -> outputs.add(CommandRunner
-                        .removeAnnouncement(command));
+                case "removeAnnouncement" -> outputs.add(CommandRunner.removeAnnouncement(command));
                 case "addAlbum" -> outputs.add(CommandRunner.addAlbum(command));
                 case "removeAlbum" -> outputs.add(CommandRunner.removeAlbum(command));
                 case "addEvent" -> outputs.add(CommandRunner.addEvent(command));
@@ -148,18 +144,14 @@ public final class Main {
                 case "wrapped" -> outputs.add(CommandRunner.wrapped(command));
                 case "subscribe" -> outputs.add(CommandRunner.subscribe(command));
                 case "getNotifications" -> outputs.add(CommandRunner.getNotifications(command));
-
                 case "previousPage" -> outputs.add(CommandRunner.previousPage(command));
                 case "nextPage" -> outputs.add(CommandRunner.nextPage(command));
-
                 case "updateRecommendations" ->
                         outputs.add(CommandRunner.updateRecommendations(command));
                 case "loadRecommendations" ->
                         outputs.add(CommandRunner.loadRecommendations(command));
-
                 case "buyMerch" -> outputs.add(CommandRunner.buyMerch(command));
                 case "seeMerch" -> outputs.add(CommandRunner.seeMerch(command));
-
                 case "buyPremium" -> outputs.add(CommandRunner.buyPremium(command));
                 case "cancelPremium" -> outputs.add(CommandRunner.cancelPremium(command));
                 case "adBreak" -> outputs.add(CommandRunner.adBreak(command));
@@ -167,9 +159,7 @@ public final class Main {
                 default -> System.out.println("Invalid command " + commandName);
             }
         }
-
         outputs.add(CommandRunner.endProgram());
-        System.out.println("=========" + filePath1 + "=========");
 
         ObjectWriter objectWriter = objectMapper.writerWithDefaultPrettyPrinter();
         objectWriter.writeValue(new File(filePath2), outputs);

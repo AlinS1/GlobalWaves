@@ -46,12 +46,21 @@ public abstract class UserAbstract {
      */
     public abstract String userType();
 
-
-    // ====================== ETAPA 3 ====================== //
+    /**
+     * Gets wrapped.
+     *
+     * @return the wrapped
+     */
     public Wrapped getWrapped() {
         return wrapped;
     }
 
+    /**
+     * Sets wrapped based on the user's type.
+     *
+     * @param userType the user type
+     * @return the wrapped
+     */
     public Wrapped setWrapped(final String userType) {
         switch (userType) {
             case "user":

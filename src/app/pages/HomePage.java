@@ -41,20 +41,16 @@ public final class HomePage implements Page {
     @Override
     public String printCurrentPage() {
         return ("Liked songs:\n\t%s\n\nFollowed playlists:\n\t%s\n\nSong recommendations:"
-                + "\n\t%s\n\nPlaylists recommendations:\n\t%s")
-                .formatted(likedSongs.stream()
-                                     .sorted(Comparator.comparing(Song::getLikes)
-                                                       .reversed()).limit(limit).map(Song::getName)
-                                     .toList(),
-                        followedPlaylists.stream().sorted((o1, o2) ->
-                                                 o2.getSongs().stream().map(Song::getLikes)
-                                                   .reduce(Integer::sum).orElse(0)
-                                                         - o1.getSongs().stream().map(Song::getLikes)
-                                                             .reduce(Integer::sum)
-                                                             .orElse(0)).limit(limit).map(Playlist::getName)
-                                         .toList(),
-                        songRecommendations.stream().map(Song::getName).toList(),
-                        playlistRecommendations.stream().map(Playlist::getName).toList());
+                + "\n\t%s\n\nPlaylists recommendations:\n\t%s").formatted(
+                likedSongs.stream().sorted(Comparator.comparing(Song::getLikes).reversed())
+                        .limit(limit).map(Song::getName).toList(), followedPlaylists.stream()
+                        .sorted((o1, o2) ->
+                                o2.getSongs().stream().map(Song::getLikes).reduce(Integer::sum)
+                                        .orElse(0) - o1.getSongs().stream().map(Song::getLikes)
+                                        .reduce(Integer::sum).orElse(0)).limit(limit)
+                        .map(Playlist::getName).toList(),
+                songRecommendations.stream().map(Song::getName).toList(),
+                playlistRecommendations.stream().map(Playlist::getName).toList());
     }
 
     @Override
@@ -62,6 +58,12 @@ public final class HomePage implements Page {
         return "homePage";
     }
 
+    /**
+     * Update the song recommendation.
+     *
+     * @param song the song to be added to the recommendations
+     * @return true if the song was added successfully, false otherwise
+     */
     public boolean updateSongRecommendation(final Song song) {
         if (songRecommendations.contains(song)) {
             return false;
@@ -71,12 +73,18 @@ public final class HomePage implements Page {
         return true;
     }
 
+    /**
+     * Update the playlist recommendation.
+     *
+     * @param playlist           the playlist to be added to the recommendations
+     * @param recommendationType the type of recommendation (random/fan)
+     * @return true if the playlist was added successfully, false otherwise
+     */
     public boolean updatePlaylistRecommendation(final Playlist playlist,
                                                 final String recommendationType) {
-
-        if(playlist.getSongs().isEmpty())
+        if (playlist.getSongs().isEmpty()) {
             return false;
-
+        }
         for (Playlist p : playlistRecommendations) {
             if (p.verifyPlaylistContainsSameSongs(playlist)) {
                 return false;

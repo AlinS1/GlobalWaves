@@ -1,25 +1,38 @@
 package app.wrapped;
 
-import app.audio.Files.AudioFile;
 import app.player.PlayerSource;
 import app.user.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.ToString;
-
-import java.nio.file.attribute.UserDefinedFileAttributeView;
 
 public interface Wrapped {
-    int limit = 5;
-    @JsonIgnore
-    public String getUserType();
+    int LIMIT = 5;
 
+    /**
+     * Gets the wrapped's user type.
+     *
+     * @return the wrapped's user type
+     */
     @JsonIgnore
-    public boolean verifyWrapped();
+    String getUserType();
 
-    @JsonIgnore
-    public void updateWrapped(PlayerSource source, User user);
+    /**
+     * Verifies if the wrapped has information to show
+     *
+     * @return true if the wrapped has information, false otherwise
+     */
+    boolean verifyWrapped();
 
-    @JsonIgnore
-    public void makeFinalWrapped();
+    /**
+     * Updates the wrapped by adding the audio file from the source.
+     *
+     * @param source the source that contains the audio file
+     * @param user the user that is playing the audio file
+     */
+    void updateWrapped(PlayerSource source, User user);
+
+    /**
+     * Updates the wrapped in order to determine the needed data for the output.
+     */
+    void updateWrappedForOutput();
 }
 

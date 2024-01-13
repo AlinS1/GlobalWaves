@@ -49,6 +49,12 @@ public final class ArtistPage implements Page {
         return "artistPage";
     }
 
+    /**
+     * Gets a merchandise that has the given name.
+     *
+     * @param name the name of the merchandise
+     * @return the merchandise or null if it doesn't exist
+     */
     public Merchandise getMerchandise(final String name) {
         for (Merchandise merchItem : merch) {
             if (merchItem.getName().equals(name)) {

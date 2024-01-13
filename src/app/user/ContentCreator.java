@@ -34,6 +34,12 @@ public abstract class ContentCreator extends UserAbstract {
     }
 
 
+    /**
+     * Add a new subcriber or remove a subscriber if the user is already subscribed.
+     *
+     * @param user the user to be subscribed/unsubscribed
+     * @return true if the user was added, false if the user was removed
+     */
     public boolean addSubscriber(final User user) {
         if (subscribers.contains(user)) {
             subscribers.remove(user);
