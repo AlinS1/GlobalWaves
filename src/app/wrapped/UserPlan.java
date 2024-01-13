@@ -17,16 +17,18 @@ public class UserPlan {
         PREMIUM
     }
 
-    private final int price = 1000000;
+    private final int premiumPrice = 1000000;
 
     @Getter
     private PlanType type;
     @Getter
     private ArrayList<Song> songsHistory;
+    private ArrayList<Song> songsHistoryBasic;
 
     public UserPlan() {
         this.type = PlanType.BASIC;
         this.songsHistory = new ArrayList<>();
+        this.songsHistoryBasic = new ArrayList<>();
     }
 
 
@@ -55,22 +57,42 @@ public class UserPlan {
         for(Map.Entry<String, List<Song>> entry : artistsHistory.entrySet()) {
             Artist artist = Admin.getInstance().getArtist(entry.getKey());
             double nrListensArtist = entry.getValue().size();
-            double artistRevenue = price * nrListensArtist / nrSongsInHistory;
+            double artistRevenue = premiumPrice * nrListensArtist / nrSongsInHistory;
 
             // Add revenue for each song. Will help us calculate the most profitable song.
             for(Song song : entry.getValue()) {
-                artist.getMonetization().addRevenueForOneSong(song.getName(), (int) artistRevenue / entry.getValue().size());
+                artist.getMonetization().addRevenueForOneSong(song.getName(),  artistRevenue / entry.getValue().size());
             }
             artist.getMonetization().addSongRevenue(artistRevenue);
-
-
-
         }
+
+        songsHistory.clear();
     }
 
     public void addSongToHistory(Song song) {
         songsHistory.add(song);
     }
+    public void addSongToHistoryBasic(Song song) {
+        songsHistoryBasic.add(song);
+    }
 
 
+
+    public void updateRevenueForArtistsBasic(int adPrice){
+        Map<String, List<Song>> artistsHistory = songsHistoryBasic.stream().collect(Collectors.groupingBy(Song::getArtist));
+
+        double nrSongsInHistory = songsHistoryBasic.size();
+        for(Map.Entry<String, List<Song>> entry : artistsHistory.entrySet()) {
+            Artist artist = Admin.getInstance().getArtist(entry.getKey());
+            double nrListensArtist = entry.getValue().size();
+            double artistRevenue = adPrice * nrListensArtist / nrSongsInHistory;
+
+            // Add revenue for each song. Will help us calculate the most profitable song.
+            for(Song song : entry.getValue()) {
+                artist.getMonetization().addRevenueForOneSong(song.getName(),  artistRevenue / entry.getValue().size());
+            }
+            artist.getMonetization().addSongRevenue(artistRevenue);
+        }
+        songsHistoryBasic.clear();
+    }
 }

@@ -192,6 +192,8 @@ public final class User extends UserAbstract {
         // ETAPA 3
         this.updateWrapped(player.getSource());
         this.updateHistoryForMonetization();
+        player.setAdBreakIncoming(false);
+
 
         player.pause();
 
@@ -685,22 +687,21 @@ public final class User extends UserAbstract {
         return "There are no pages left to go forward.";
     }
 
-    public void updateRecommendations(final CommandInput cmd) {
+    public boolean updateRecommendations(final CommandInput cmd) {
         String recommendationType = cmd.getRecommendationType();
         if (recommendationType.equals("random_song")) {
             int listenedTime =
                     player.getCurrentAudioFile().getDuration() - player.getSource().getDuration();
             if (listenedTime < homePage.getLimitDuration()) {
-                homePage.updateSongRecommendation((Song) player.getCurrentAudioFile());
+                return homePage.updateSongRecommendation((Song) player.getCurrentAudioFile());
             } else {
                 List<Song> songsbyGenre = Admin.getInstance()
                                                .getSongsByGenre(
                                                        ((Song) (player.getCurrentAudioFile())).getGenre());
                 Random random = new Random(listenedTime);
                 int idx = random.nextInt(songsbyGenre.size());
-                homePage.updateSongRecommendation(songsbyGenre.get(idx));
+                return homePage.updateSongRecommendation(songsbyGenre.get(idx));
             }
-            return;
         }
         if (recommendationType.equals("random_playlist")) {
             ArrayList<String> top3Genres = getTop3Genres();
@@ -717,9 +718,7 @@ public final class User extends UserAbstract {
                 }
             }
 
-            homePage.updatePlaylistRecommendation(playlistRandom, recommendationType);
-            //System.out.println(playlistRandom.getName() + playlistRandom);
-            return;
+            return homePage.updatePlaylistRecommendation(playlistRandom, recommendationType);
         }
         if (recommendationType.equals("fans_playlist")) {
             String artistCurrent = ((Song) player.getCurrentAudioFile()).getArtist();
@@ -735,9 +734,9 @@ public final class User extends UserAbstract {
                 User user = Admin.getInstance().getUser(fan);
                 playlistFans.getSongs().addAll(user.getTop5LikedSongs());
             }
-            homePage.updatePlaylistRecommendation(playlistFans, recommendationType);
-            //System.out.println(playlistFans.getName() + playlistFans);
+            return homePage.updatePlaylistRecommendation(playlistFans, recommendationType);
         }
+        return false;
     }
 
     public ArrayList<Song> getTop5LikedSongs() {
@@ -846,10 +845,9 @@ public final class User extends UserAbstract {
 
         if (userPlan.getType() == UserPlan.PlanType.PREMIUM) {
             userPlan.addSongToHistory((Song) player.getCurrentAudioFile());
+        } else {
+            userPlan.addSongToHistoryBasic((Song) player.getCurrentAudioFile());
         }
-//        else {
-//
-//        }
     }
 
     public String adBreak(int price) {
@@ -860,8 +858,9 @@ public final class User extends UserAbstract {
             return getUsername() + " is not playing any music.";
         }
 
+        player.updateAdBreakIncoming(price);
 
-
+//        getUserPlan().updateRevenueForArtistsBasic(price);
 
         return "Ad inserted successfully.";
     }

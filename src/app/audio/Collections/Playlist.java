@@ -141,4 +141,12 @@ public final class Playlist extends AudioCollection {
     public boolean containsTrack(final AudioFile track) {
         return songs.contains(track);
     }
+    public boolean verifyPlaylistContainsSameSongs(final Playlist playlistToCompare){
+        for(Song song : playlistToCompare.getSongs()){
+            if(!this.containsSong(song)){
+                return false; // distinct playlists
+            }
+        }
+        return true;
+    }
 }

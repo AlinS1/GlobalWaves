@@ -62,15 +62,26 @@ public final class HomePage implements Page {
         return "homePage";
     }
 
-    public void updateSongRecommendation(final Song song) {
+    public boolean updateSongRecommendation(final Song song) {
+        if (songRecommendations.contains(song)) {
+            return false;
+        }
         songRecommendations.add(song);
         lastRecommendation = "random_song";
+        return true;
     }
 
-    public void updatePlaylistRecommendation(final Playlist playlist,
-                                             final String recommendationType) {
+    public boolean updatePlaylistRecommendation(final Playlist playlist,
+                                                final String recommendationType) {
+
+        for (Playlist p : playlistRecommendations) {
+            if (p.verifyPlaylistContainsSameSongs(playlist)) {
+                return false;
+            }
+        }
         this.lastRecommendation = recommendationType;
         playlistRecommendations.add(playlist);
+        return true;
     }
 
 }

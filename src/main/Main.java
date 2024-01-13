@@ -57,9 +57,9 @@ public final class Main {
             }
             kon++;
 
-            if (kon > 15) {
-                break;
-            }
+//            if (kon > 7) {
+//                break;
+//            }
 
             String filepath = CheckerConstants.OUT_PATH + file.getName();
             File out = new File(filepath);
@@ -169,6 +169,7 @@ public final class Main {
         }
 
         outputs.add(CommandRunner.endProgram());
+        System.out.println("=========" + filePath1 + "=========");
 
         ObjectWriter objectWriter = objectMapper.writerWithDefaultPrettyPrinter();
         objectWriter.writeValue(new File(filePath2), outputs);

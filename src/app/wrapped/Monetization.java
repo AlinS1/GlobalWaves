@@ -4,7 +4,9 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Monetization {
@@ -16,7 +18,7 @@ public class Monetization {
     private int ranking;
     @Getter
     private String mostProfitableSong = "N/A";
-    private Map<String, Integer> songsProfits = new HashMap<>();
+    private Map<String, Double> songsProfits = new HashMap<>();
 
     public void addMerchRevenue(double revenue) {
         merchRevenue += revenue;
@@ -31,7 +33,7 @@ public class Monetization {
     }
 
 
-    public void addRevenueForOneSong(String song, int profit) {
+    public void addRevenueForOneSong(String song, double profit) {
         if (songsProfits.containsKey(song)) {
             songsProfits.put(song, songsProfits.get(song) + profit);
         } else {
@@ -43,10 +45,12 @@ public class Monetization {
         if(songsProfits.isEmpty()) {
             return;
         }
-        Stream<Map.Entry<String, Integer>> sortedSongsByProfit;
+        List<Map.Entry<String, Double>> sortedSongsByProfit;
         sortedSongsByProfit = songsProfits.entrySet().stream()
-                                          .sorted(Map.Entry.<String, Integer>comparingByValue()
-                                                           .reversed());
-        mostProfitableSong = sortedSongsByProfit.findFirst().get().getKey();
+                                          .sorted(Map.Entry.<String, Double>comparingByValue()
+                                                           .reversed().thenComparing(Map.Entry.comparingByKey())).collect(Collectors.toList());
+
+        //  System.out.println(sortedSongsByProfit);
+        mostProfitableSong = sortedSongsByProfit.get(0).getKey();
     }
 }

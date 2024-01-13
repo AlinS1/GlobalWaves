@@ -923,10 +923,14 @@ public final class CommandRunner {
 
         User user = Admin.getInstance().getUser(commandInput.getUsername());
 
-        user.updateRecommendations(commandInput);
+        String message = null;
+        if (user.updateRecommendations(commandInput)) {
+            message = "The recommendations for user " + commandInput.getUsername()
+                    + " have been updated successfully.";
+        } else {
+            message = "No new recommendations were found";
+        }
 
-        String message = "The recommendations for user " + commandInput.getUsername()
-                + " have been updated successfully.";
 
         ObjectNode objectNode = objectMapper.createObjectNode();
         objectNode.put("command", commandInput.getCommand());

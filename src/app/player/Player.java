@@ -1,11 +1,14 @@
 package app.player;
 
+import app.Admin;
 import app.audio.Collections.AudioCollection;
 import app.audio.Files.AudioFile;
+import app.audio.Files.Song;
 import app.audio.LibraryEntry;
 import app.user.User;
 import app.utils.Enums;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +28,12 @@ public final class Player {
 
     private ArrayList<PodcastBookmark> bookmarks = new ArrayList<>();
 
+    @Setter
+    private boolean adBreakIncoming;
+    private int adPrice;
+    private Song ad;
+    private int adDurationRemaining;
+
 
     /**
      * Instantiates a new Player.
@@ -32,6 +41,7 @@ public final class Player {
     public Player() {
         this.repeatMode = Enums.RepeatMode.NO_REPEAT;
         this.paused = true;
+        adBreakIncoming = false;
     }
 
     /**
@@ -52,8 +62,8 @@ public final class Player {
         if (source != null && source.getAudioFile() != null) {
             PodcastBookmark currentBookmark =
                     new PodcastBookmark(source.getAudioCollection().getName(),
-                                        source.getIndex(),
-                                        source.getDuration());
+                            source.getIndex(),
+                            source.getDuration());
             bookmarks.removeIf(bookmark -> bookmark.getName().equals(currentBookmark.getName()));
             bookmarks.add(currentBookmark);
         }
@@ -129,7 +139,7 @@ public final class Player {
         }
 
         if (source.getType() == Enums.PlayerSourceType.PLAYLIST
-            || source.getType() == Enums.PlayerSourceType.ALBUM) {
+                || source.getType() == Enums.PlayerSourceType.ALBUM) {
             shuffle = !shuffle;
             if (shuffle) {
                 source.updateShuffleIndex();
@@ -171,11 +181,30 @@ public final class Player {
      */
     public void simulatePlayer(final int time, final User user) {
         int elapsedTime = time;
+
+        if(elapsedTime - adDurationRemaining > 0) {
+            elapsedTime -= adDurationRemaining;
+            adDurationRemaining = 0;
+        } else {
+            adDurationRemaining -= elapsedTime;
+            elapsedTime = 0;
+            return;
+        }
+
         if (!paused) {
             while (elapsedTime >= source.getDuration()) {
                 elapsedTime -= source.getDuration();
-                next();
+
+                elapsedTime = playAd(elapsedTime, user);
+
+                // If the ad is still playing, we don't want to play the next song.
+                if(adDurationRemaining > 0) {
+                    return;
+                }
+                    next();
+
                 if (paused) {
+                    // elapsedTime = playAd(elapsedTime, user);
                     break;
                 }
                 user.updateWrapped(source);
@@ -186,6 +215,23 @@ public final class Player {
             }
         }
     }
+
+    public int playAd(int elapsedTime, User user) {
+        if (adBreakIncoming) {
+            elapsedTime -= ad.getDuration();
+            user.getUserPlan().updateRevenueForArtistsBasic(adPrice);
+            adBreakIncoming = false;
+            if (elapsedTime < 0) {
+                adDurationRemaining = -elapsedTime;
+                System.out.println("Ad_ramas");
+                return 0;
+            } else {
+                System.out.println("Ad");
+            }
+        }
+        return elapsedTime;
+    }
+
 
     /**
      * Next.
@@ -290,5 +336,13 @@ public final class Player {
         }
 
         return new PlayerStats(filename, duration, repeatMode, shuffle, paused);
+    }
+
+// ETAPA 3
+
+    public void updateAdBreakIncoming(final int adPrice) {
+        this.adBreakIncoming = true;
+        this.adPrice = adPrice;
+        this.ad = Admin.getInstance().getSongs().get(0);
     }
 }
