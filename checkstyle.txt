@@ -26,6 +26,8 @@ Starting audit...
 [ERROR] D:\Should_be_on_desktop\Facultate\An2_Sem1\POO\OOP-Part3\.\src\app\pages\HomePage.java:54: Line is longer than 100 characters (found 108). [LineLength]
 [ERROR] D:\Should_be_on_desktop\Facultate\An2_Sem1\POO\OOP-Part3\.\src\app\pages\HomePage.java:65:5: Missing a Javadoc comment. [MissingJavadocMethod]
 [ERROR] D:\Should_be_on_desktop\Facultate\An2_Sem1\POO\OOP-Part3\.\src\app\pages\HomePage.java:74:5: Missing a Javadoc comment. [MissingJavadocMethod]
+[ERROR] D:\Should_be_on_desktop\Facultate\An2_Sem1\POO\OOP-Part3\.\src\app\pages\HomePage.java:77:9: 'if' construct must use '{}'s. [NeedBraces]
+[ERROR] D:\Should_be_on_desktop\Facultate\An2_Sem1\POO\OOP-Part3\.\src\app\pages\HomePage.java:77:9: 'if' is not followed by whitespace. [WhitespaceAround]
 [ERROR] D:\Should_be_on_desktop\Facultate\An2_Sem1\POO\OOP-Part3\.\src\app\pages\Page.java:14:5: Missing a Javadoc comment. [MissingJavadocMethod]
 [ERROR] D:\Should_be_on_desktop\Facultate\An2_Sem1\POO\OOP-Part3\.\src\app\player\Player.java:185:9: 'if' is not followed by whitespace. [WhitespaceAround]
 [ERROR] D:\Should_be_on_desktop\Facultate\An2_Sem1\POO\OOP-Part3\.\src\app\player\Player.java:201:17: 'if' is not followed by whitespace. [WhitespaceAround]
@@ -186,4 +188,4 @@ Starting audit...
 [ERROR] D:\Should_be_on_desktop\Facultate\An2_Sem1\POO\OOP-Part3\.\src\app\wrapped\WrappedUser.java:228:5: Class 'WrappedUser' looks like designed for extension (can be subclassed), but the method 'makeFinalWrapped' does not have javadoc that explains how to do that safely. If class is not designed for extension consider making the class 'WrappedUser' final or making the method 'makeFinalWrapped' static/final/abstract/empty, or adding allowed annotation for the method. [DesignForExtension]
 [ERROR] D:\Should_be_on_desktop\Facultate\An2_Sem1\POO\OOP-Part3\.\src\app\wrapped\WrappedUser.java:228:5: Missing a Javadoc comment. [MissingJavadocMethod]
 Audit done.
-Checkstyle ends with 186 errors.
+Checkstyle ends with 188 errors.

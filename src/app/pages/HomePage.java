@@ -74,6 +74,9 @@ public final class HomePage implements Page {
     public boolean updatePlaylistRecommendation(final Playlist playlist,
                                                 final String recommendationType) {
 
+        if(playlist.getSongs().isEmpty())
+            return false;
+
         for (Playlist p : playlistRecommendations) {
             if (p.verifyPlaylistContainsSameSongs(playlist)) {
                 return false;
