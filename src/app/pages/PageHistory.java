@@ -1,6 +1,5 @@
-package app.wrapped;
+package app.pages;
 
-import app.pages.Page;
 import java.util.ArrayList;
 
 public class PageHistory {

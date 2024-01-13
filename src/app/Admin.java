@@ -8,11 +8,11 @@ import app.audio.Files.AudioFile;
 import app.audio.Files.Episode;
 import app.audio.Files.Song;
 import app.player.Player;
-import app.user.Announcement;
+import app.user.objects.Announcement;
 import app.user.Artist;
-import app.user.Event;
+import app.user.objects.Event;
 import app.user.Host;
-import app.user.Merchandise;
+import app.user.objects.Merchandise;
 import app.user.User;
 import app.user.UserAbstract;
 import app.wrapped.WrappedArtist;
@@ -58,7 +58,7 @@ public final class Admin {
     private final int dateDayLowerLimit = 1;
     private final int dateDayHigherLimit = 31;
     private final int dateFebHigherLimit = 28;
-    private static Admin instance;
+    private static Admin instance = null;
 
     private Admin() {
     }

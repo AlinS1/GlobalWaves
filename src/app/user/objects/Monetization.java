@@ -1,4 +1,4 @@
-package app.wrapped;
+package app.user.objects;
 
 import lombok.Getter;
 import lombok.Setter;

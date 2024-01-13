@@ -1,9 +1,7 @@
 package app.user;
 
 import app.wrapped.Wrapped;
-import app.wrapped.WrappedArtist;
-import app.wrapped.WrappedHost;
-import app.wrapped.WrappedUser;
+import app.wrapped.WrappedFactory;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -62,16 +60,8 @@ public abstract class UserAbstract {
      * @return the wrapped
      */
     public Wrapped setWrapped(final String userType) {
-        switch (userType) {
-            case "user":
-                return new WrappedUser("user");
-            case "artist":
-                return new WrappedArtist("artist");
-            case "host":
-                return new WrappedHost("host");
-            default:
-                return null;
-        }
+        WrappedFactory wrappedFactory = new WrappedFactory();
+        return wrappedFactory.createWrapped(userType);
     }
 
 

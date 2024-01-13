@@ -7,7 +7,9 @@ import app.audio.Collections.Album;
 import app.audio.Collections.AlbumOutput;
 import app.audio.Files.Song;
 import app.pages.ArtistPage;
-import app.wrapped.Monetization;
+import app.user.objects.Event;
+import app.user.objects.Merchandise;
+import app.user.objects.Monetization;
 import lombok.Getter;
 
 /**

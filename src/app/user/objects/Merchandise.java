@@ -1,24 +1,24 @@
-package app.user;
+package app.user.objects;
 
 /**
- * The type Event.
+ * The type Merchandise.
  */
-public class Event {
+public class Merchandise {
     private String name;
     private String description;
-    private String date;
+    private int price;
 
     /**
-     * Instantiates a new Event.
+     * Instantiates a new Merchandise.
      *
      * @param name        the name
      * @param description the description
-     * @param date        the date
+     * @param price       the price
      */
-    public Event(final String name, final String description, final String date) {
+    public Merchandise(final String name, final String description, final int price) {
         this.name = name;
         this.description = description;
-        this.date = date;
+        this.price = price;
     }
 
     /**
@@ -58,20 +58,20 @@ public class Event {
     }
 
     /**
-     * Gets date.
+     * Gets price.
      *
-     * @return the date
+     * @return the price
      */
-    public String getDate() {
-        return date;
+    public int getPrice() {
+        return price;
     }
 
     /**
-     * Sets date.
+     * Sets price.
      *
-     * @param date the date
+     * @param price the price
      */
-    public void setDate(final String date) {
-        this.date = date;
+    public void setPrice(final int price) {
+        this.price = price;
     }
 }

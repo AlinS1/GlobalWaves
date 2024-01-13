@@ -2,6 +2,7 @@ package app.user;
 
 import app.audio.Collections.Podcast;
 import app.pages.HostPage;
+import app.user.objects.Announcement;
 
 import java.util.ArrayList;
 
