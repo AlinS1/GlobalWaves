@@ -8,6 +8,7 @@ import app.searchBar.Filters;
 import app.user.Artist;
 import app.user.Host;
 import app.user.User;
+import app.wrapped.UserPlan;
 import app.wrapped.Wrapped;
 import app.wrapped.Monetization;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -812,7 +813,8 @@ public final class CommandRunner {
 
 
         if (!wrapped.verifyWrapped()) {
-            String message = "No data to show for user " + commandInput.getUsername() + ".";
+            String message = "No data to show for " + userType + " " + commandInput.getUsername()
+                    + ".";
             objectNode.put("message", objectMapper.valueToTree(message));
         } else {
             wrapped.makeFinalWrapped();
@@ -823,12 +825,20 @@ public final class CommandRunner {
     }
 
     public static ObjectNode endProgram() {
+
+        for (User user : Admin.getInstance().getUsers()) {
+            if (user.getUserPlan().getType() == UserPlan.PlanType.PREMIUM) {
+                user.getUserPlan().updateRevenueForArtistsPremium();
+            }
+        }
+
         ArrayList<Artist> artistsRanked = Admin.getInstance().rankArtistsByMonetization();
 
         LinkedHashMap<String, Monetization> monetizationTable = new LinkedHashMap<>();
 
         for (Artist artist : artistsRanked) {
             artist.getMonetization().setRanking(artistsRanked.indexOf(artist) + 1);
+            artist.getMonetization().updateMostProfitableSong();
             monetizationTable.put(artist.getUsername(), artist.getMonetization());
         }
 
@@ -975,6 +985,60 @@ public final class CommandRunner {
         } else {
             objectNode.put("result", objectMapper.valueToTree(user.getBoughtMerch()));
         }
+        return objectNode;
+    }
+
+    public static ObjectNode buyPremium(final CommandInput commandInput) {
+
+        String message = null;
+        User user = admin.getUser(commandInput.getUsername());
+        if (user == null) {
+            message = "The username " + commandInput.getUsername() + " doesn't exist.";
+        } else {
+            message = user.buyPremium();
+        }
+        ObjectNode objectNode = objectMapper.createObjectNode();
+        objectNode.put("command", commandInput.getCommand());
+        objectNode.put("user", commandInput.getUsername());
+        objectNode.put("timestamp", commandInput.getTimestamp());
+        objectNode.put("message", message);
+
+        return objectNode;
+    }
+
+    public static ObjectNode cancelPremium(final CommandInput commandInput) {
+
+        String message = null;
+        User user = admin.getUser(commandInput.getUsername());
+        if (user == null) {
+            message = "The username " + commandInput.getUsername() + " doesn't exist.";
+        } else {
+            message = user.cancelPremium();
+        }
+        ObjectNode objectNode = objectMapper.createObjectNode();
+        objectNode.put("command", commandInput.getCommand());
+        objectNode.put("user", commandInput.getUsername());
+        objectNode.put("timestamp", commandInput.getTimestamp());
+        objectNode.put("message", message);
+
+        return objectNode;
+    }
+
+    public static ObjectNode adBreak(final CommandInput commandInput) {
+
+        String message = null;
+        User user = admin.getUser(commandInput.getUsername());
+        if (user == null) {
+            message = "The username " + commandInput.getUsername() + " doesn't exist.";
+        } else {
+            message = user.adBreak(commandInput.getPrice());
+        }
+        ObjectNode objectNode = objectMapper.createObjectNode();
+        objectNode.put("command", commandInput.getCommand());
+        objectNode.put("user", commandInput.getUsername());
+        objectNode.put("timestamp", commandInput.getTimestamp());
+        objectNode.put("message", message);
+
         return objectNode;
     }
 }

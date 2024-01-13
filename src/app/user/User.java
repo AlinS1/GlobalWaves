@@ -20,6 +20,7 @@ import app.searchBar.SearchBar;
 import app.utils.Enums;
 import app.wrapped.Notification;
 import app.wrapped.PageHistory;
+import app.wrapped.UserPlan;
 import app.wrapped.WrappedArtist;
 import fileio.input.CommandInput;
 import lombok.Getter;
@@ -63,6 +64,8 @@ public final class User extends UserAbstract {
     private PageHistory pageHistory = new PageHistory();
     @Getter
     private List<String> boughtMerch = new ArrayList<String>();
+    @Getter
+    private UserPlan userPlan = new UserPlan();
 
 
     /**
@@ -188,6 +191,7 @@ public final class User extends UserAbstract {
 
         // ETAPA 3
         this.updateWrapped(player.getSource());
+        this.updateHistoryForMonetization();
 
         player.pause();
 
@@ -800,6 +804,7 @@ public final class User extends UserAbstract {
         searchBar.clearSelection();
 
         this.updateWrapped(player.getSource());
+        this.updateHistoryForMonetization();
 
         player.pause();
 
@@ -823,9 +828,42 @@ public final class User extends UserAbstract {
                 return getUsername() + " has added new merch successfully.";
             }
         }
-        return "not found";
+        return "Artist not found for the bought merch";
     }
 
+    public String buyPremium() {
+        return getUsername() + userPlan.setType(UserPlan.PlanType.PREMIUM);
+    }
 
+    public String cancelPremium() {
+        return getUsername() + userPlan.setType(UserPlan.PlanType.BASIC);
+    }
+
+    public void updateHistoryForMonetization() {
+        if (player.getType().equals("podcast")) {
+            return;
+        }
+
+        if (userPlan.getType() == UserPlan.PlanType.PREMIUM) {
+            userPlan.addSongToHistory((Song) player.getCurrentAudioFile());
+        }
+//        else {
+//
+//        }
+    }
+
+    public String adBreak(int price) {
+        if (userPlan.getType() == UserPlan.PlanType.PREMIUM) {
+            return "Ad break unavailable.";
+        }
+        if (player.getCurrentAudioFile() == null || player.getType().equals("podcast")) {
+            return getUsername() + " is not playing any music.";
+        }
+
+
+
+
+        return "Ad inserted successfully.";
+    }
 
 }

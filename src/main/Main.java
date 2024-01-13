@@ -160,6 +160,10 @@ public final class Main {
                 case "buyMerch" -> outputs.add(CommandRunner.buyMerch(command));
                 case "seeMerch" -> outputs.add(CommandRunner.seeMerch(command));
 
+                case "buyPremium" -> outputs.add(CommandRunner.buyPremium(command));
+                case "cancelPremium" -> outputs.add(CommandRunner.cancelPremium(command));
+                case "adBreak" -> outputs.add(CommandRunner.adBreak(command));
+
                 default -> System.out.println("Invalid command " + commandName);
             }
         }

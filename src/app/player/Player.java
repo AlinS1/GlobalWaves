@@ -179,6 +179,7 @@ public final class Player {
                     break;
                 }
                 user.updateWrapped(source);
+                user.updateHistoryForMonetization();
             }
             if (!paused) {
                 source.skip(-elapsedTime);
