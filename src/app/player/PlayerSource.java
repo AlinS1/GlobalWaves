@@ -4,6 +4,7 @@ import app.audio.Collections.AudioCollection;
 import app.audio.Files.AudioFile;
 import app.utils.Enums;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,6 +19,7 @@ public class PlayerSource {
     private Enums.PlayerSourceType type;
     @Getter
     private AudioCollection audioCollection;
+    @Setter
     @Getter
     private AudioFile audioFile;
     @Getter
@@ -26,49 +28,100 @@ public class PlayerSource {
     private int remainedDuration;
     private final List<Integer> indices = new ArrayList<>();
 
+
     /**
-     * Instantiates a new Player source.
-     *
-     * @param type      the type
-     * @param audioFile the audio file
+     * Builder Design Pattern used to create a PlayerSource object.
      */
-    public PlayerSource(final Enums.PlayerSourceType type, final AudioFile audioFile) {
-        this.type = type;
-        this.audioFile = audioFile;
-        this.remainedDuration = audioFile.getDuration();
+    public static class Builder {
+        private Enums.PlayerSourceType type; // the mandatory field
+        private AudioCollection audioCollection;
+        private AudioFile audioFile;
+        private int index;
+        private int indexShuffled;
+        private int remainedDuration;
+
+        /**
+         * Instantiates a new Builder.
+         *
+         * @param givenType the given type
+         */
+        public Builder(final Enums.PlayerSourceType givenType) {
+            this.type = givenType;
+            this.index = 0;
+            this.indexShuffled = 0;
+            this.remainedDuration = 0;
+            audioCollection = null;
+            audioFile = null;
+        }
+
+        /**
+         * Updates the audioCollection field.
+         *
+         * @param givenAudioCollection the given audio collection
+         * @return the builder
+         */
+        public Builder audioCollection(final AudioCollection givenAudioCollection) {
+            this.audioCollection = givenAudioCollection;
+            return this;
+        }
+
+        /**
+         * Updates the audioFile field.
+         *
+         * @param givenAudioFile the given audio file
+         * @return the builder
+         */
+        public Builder audioFile(final AudioFile givenAudioFile) {
+            this.audioFile = givenAudioFile;
+            return this;
+        }
+
+        /**
+         * Updates the index field.
+         *
+         * @param givenIndex the given index
+         * @return the builder
+         */
+        public Builder index(final int givenIndex) {
+            this.index = givenIndex;
+            return this;
+        }
+
+        /**
+         * Updates the remainedDuration field.
+         *
+         * @param givenRemainedDuration the given remained duration
+         * @return the builder
+         */
+        public Builder remainedDuration(final int givenRemainedDuration) {
+            this.remainedDuration = givenRemainedDuration;
+            return this;
+        }
+
+        /**
+         * Builds the PlayerSource object.
+         *
+         * @return the player source
+         */
+        public PlayerSource build() {
+            return new PlayerSource(this);
+        }
     }
 
     /**
-     * Instantiates a new Player source.
+     * Private constructor in order to force the use of the Builder
      *
-     * @param type            the type
-     * @param audioCollection the audio collection
+     * @param builder the builder of the PlayerSource object
      */
-    public PlayerSource(final Enums.PlayerSourceType type, final AudioCollection audioCollection) {
-        this.type = type;
-        this.audioCollection = audioCollection;
-        this.audioFile = audioCollection.getTrackByIndex(0);
-        this.index = 0;
-        this.indexShuffled = 0;
-        this.remainedDuration = audioFile.getDuration();
+    private PlayerSource(final Builder builder) {
+        this.type = builder.type;
+        this.audioCollection = builder.audioCollection;
+        this.audioFile = builder.audioFile;
+        this.index = builder.index;
+        this.indexShuffled = builder.indexShuffled;
+        this.remainedDuration = builder.remainedDuration;
     }
 
-    /**
-     * Instantiates a new Player source.
-     *
-     * @param type            the type
-     * @param audioCollection the audio collection
-     * @param bookmark        the bookmark
-     */
-    public PlayerSource(final Enums.PlayerSourceType type,
-                        final AudioCollection audioCollection,
-                        final PodcastBookmark bookmark) {
-        this.type = type;
-        this.audioCollection = audioCollection;
-        this.index = bookmark.getId();
-        this.remainedDuration = bookmark.getTimestamp();
-        this.audioFile = audioCollection.getTrackByIndex(index);
-    }
 
     /**
      * Gets duration.
@@ -86,8 +139,7 @@ public class PlayerSource {
      * @param shuffle    the shuffle
      * @return the next audio file
      */
-    public boolean setNextAudioFile(final Enums.RepeatMode repeatMode,
-                                    final boolean shuffle) {
+    public boolean setNextAudioFile(final Enums.RepeatMode repeatMode, final boolean shuffle) {
         boolean isPaused = false;
 
         if (type == Enums.PlayerSourceType.LIBRARY) {
@@ -99,8 +151,8 @@ public class PlayerSource {
             }
         } else {
             if (repeatMode == Enums.RepeatMode.REPEAT_ONCE
-                || repeatMode == Enums.RepeatMode.REPEAT_CURRENT_SONG
-                || repeatMode == Enums.RepeatMode.REPEAT_INFINITE) {
+                    || repeatMode == Enums.RepeatMode.REPEAT_CURRENT_SONG
+                    || repeatMode == Enums.RepeatMode.REPEAT_INFINITE) {
                 remainedDuration = audioFile.getDuration();
             } else if (repeatMode == Enums.RepeatMode.NO_REPEAT) {
                 if (shuffle) {
@@ -213,15 +265,6 @@ public class PlayerSource {
 
     private void updateAudioFile() {
         setAudioFile(audioCollection.getTrackByIndex(index));
-    }
-
-    /**
-     * Sets audio file.
-     *
-     * @param audioFile the audio file
-     */
-    public void setAudioFile(final AudioFile audioFile) {
-        this.audioFile = audioFile;
     }
 
 }

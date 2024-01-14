@@ -82,8 +82,9 @@ public final class Main {
         admin.setUsers(library.getUsers());
         admin.setSongs(library.getSongs());
         admin.setPodcasts(library.getPodcasts());
-        CommandRunner.updateAdmin();
         CommandRunner cmdRunner = CommandRunner.getInstance();
+        CommandRunner.updateAdmin();
+
 
         for (CommandInput command : commands) {
             admin.updateTimestamp(command.getTimestamp());

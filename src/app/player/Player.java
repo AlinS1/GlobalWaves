@@ -78,15 +78,21 @@ public final class Player {
     public static PlayerSource createSource(final String type, final LibraryEntry entry,
                                             final List<PodcastBookmark> bookmarks) {
         if ("song".equals(type)) {
-            return new PlayerSource(Enums.PlayerSourceType.LIBRARY, (AudioFile) entry);
+            return new PlayerSource.Builder(Enums.PlayerSourceType.LIBRARY).audioFile(
+                    (AudioFile) entry).remainedDuration(((AudioFile) entry).getDuration()).build();
         } else if ("playlist".equals(type)) {
-            return new PlayerSource(Enums.PlayerSourceType.PLAYLIST, (AudioCollection) entry);
+            return new PlayerSource.Builder(Enums.PlayerSourceType.PLAYLIST).audioCollection(
+                            (AudioCollection) entry).audioFile(((AudioCollection) entry).getTrackByIndex(0))
+                    .remainedDuration(((AudioCollection) entry).getTrackByIndex(0).getDuration())
+                    .build();
         } else if ("podcast".equals(type)) {
             return createPodcastSource((AudioCollection) entry, bookmarks);
         } else if ("album".equals(type)) {
-            return new PlayerSource(Enums.PlayerSourceType.ALBUM, (AudioCollection) entry);
+            return new PlayerSource.Builder(Enums.PlayerSourceType.ALBUM).audioCollection(
+                            (AudioCollection) entry).audioFile(((AudioCollection) entry).getTrackByIndex(0))
+                    .remainedDuration(((AudioCollection) entry).getTrackByIndex(0).getDuration())
+                    .build();
         }
-
         return null;
     }
 
@@ -94,10 +100,15 @@ public final class Player {
                                                     final List<PodcastBookmark> bookmarks) {
         for (PodcastBookmark bookmark : bookmarks) {
             if (bookmark.getName().equals(collection.getName())) {
-                return new PlayerSource(Enums.PlayerSourceType.PODCAST, collection, bookmark);
+                return new PlayerSource.Builder(Enums.PlayerSourceType.PODCAST).index(
+                                bookmark.getId()).remainedDuration(bookmark.getTimestamp())
+                        .audioCollection(collection).audioFile(collection.getTrackByIndex(0))
+                        .build();
             }
         }
-        return new PlayerSource(Enums.PlayerSourceType.PODCAST, collection);
+        return new PlayerSource.Builder(Enums.PlayerSourceType.PODCAST).audioCollection(collection)
+                .audioFile(collection.getTrackByIndex(0))
+                .remainedDuration(collection.getTrackByIndex(0).getDuration()).build();
     }
 
     /**
