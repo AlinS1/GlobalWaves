@@ -16,6 +16,8 @@ The project includes mechanisms for an Audio Player simulation for multiple
 simultaneous users, Monetization for artists, Notifications, Page
 Navigation, Recommendations based on different criteria and more.
 
+### Design Patterns Used:
+
 Regarding the used **Design Patterns**, I used the **Factory Method Pattern**
 for the creation of the users' Wrapped, because each type of user
 (normal/artist/host) has different fields for their Wrapped, so we need to
